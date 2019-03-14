@@ -24,12 +24,12 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
     private let typeErasedDecoratorBlock: (Any, UITableViewCell) -> Void
     private let diffItemArrays: ([Any], [Any]) -> DiffResult
     
-    /// The cell to be shown if `numberOfItems` is 0
+    /// The cell to be shown if the current `[Model]?` is nil, or has 0 items.
     /// (i.e. before the content has finised loading)
     public var placeholderCell: UITableViewCell
     
     public init<DequeableCell: UITableViewCell, Model: Hashable>(
-        name: String?,
+        name: String? = nil,
         cellType: DequeableCell.Type,
         displayIf condition: @escaping () -> Bool = { true },
         placeholderCell: UITableViewCell = LoadingIndicatorCell(),
@@ -66,7 +66,7 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
                 fatalError("Unable to reconstruct `\([Model].self)` from `\(type(of: originalUntypedArray))`")
             }
             
-            guard let newUntypedArray = originalUntypedArray as? [Model] else {
+            guard let newUntypedArray = newUntypedArray as? [Model] else {
                 fatalError("Unable to reconstruct `\([Model].self)` from `\(type(of: originalUntypedArray))`")
             }
             

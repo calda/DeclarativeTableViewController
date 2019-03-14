@@ -9,7 +9,7 @@
 
 // MARK: - DiffResult
 
-public struct DiffResult {
+public struct DiffResult: Equatable {
     public var deletedIndicies: Set<Int>
     public var insertedIndicies: Set<Int>
     public var unchangedIndicies: Set<Int>
@@ -29,24 +29,42 @@ public struct DiffResult {
 
 // MARK: - Array + diff(against:)
 
-public extension Array where Element: Hashable {
+extension Array where Element: Hashable {
     
     func diff(against other: [Element]) -> DiffResult {
         let originalSet = Set<Element>(self)
         let changedSet = Set<Element>(other)
         
+        // It doesn't really make sense to have the same `UITableViewCell` displayed twice,
+        // so I won't bother supporting diffing arrays with duplicate items at this time.
+        precondition(originalSet.count == self.count, "diff(against:) does not support duplicate items at this time.")
+        precondition(changedSet.count == other.count, "diff(against:) does not support duplicate items at this time.")
+        
         var diffResult = DiffResult()
         
-        for (index, cell) in self.enumerated() {
-            if !changedSet.contains(cell) {
+        // find the items that were deleted from the original array
+        for (index, item) in self.enumerated() {
+            if !changedSet.contains(item) {
                 diffResult.deletedIndicies.insert(index)
             }
         }
         
-        for (index, cell) in other.enumerated() {
-            if !originalSet.contains(cell) {
+        // find the items that were inserted into the new array
+        for (index, item) in other.enumerated() {
+            if !originalSet.contains(item) {
                 diffResult.insertedIndicies.insert(index)
-            } else {
+            }
+        }
+        
+        // build the intermediate array without the deleted item
+        var itemsNotDeletedFromOriginal = self
+        for index in [Int](diffResult.deletedIndicies).sorted(by: >) {
+            itemsNotDeletedFromOriginal.remove(at: index)
+        }
+        
+        let setOfItemsRemainingFromOriginal = Set(itemsNotDeletedFromOriginal)
+        for (index, item) in self.enumerated() {
+            if setOfItemsRemainingFromOriginal.contains(item) {
                 diffResult.unchangedIndicies.insert(index)
             }
         }

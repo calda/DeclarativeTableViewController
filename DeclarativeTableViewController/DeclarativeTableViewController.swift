@@ -22,8 +22,8 @@ open class DeclarativeTableViewController: UITableViewController {
     ///   this array may not be equal to the list of sections actually being displayed at this moment.
     public var sections = [TableViewSectionProvider]()
     
-    /// The sections currently being displayed.
-    /// - Note: `sections.filter { $0.shouldDisplaySection() && $0.numberOfRows > 0 }`
+    /// The sections currently being displayed by the Table View.
+    /// - Note: Call `reloadData()` to update the visible sections.
     private(set) var sectionsBeingDisplayed = [TableViewSectionProvider]()
     
     /// The method in which the contents of this table view can be refreshed by the user
@@ -39,13 +39,9 @@ open class DeclarativeTableViewController: UITableViewController {
         case pullToRefresh
     }
     
-    
-    public init(refreshStyle: RefreshStyle) {
+    public init(style: UITableView.Style = .grouped, refreshStyle: RefreshStyle = .none) {
         self.refreshStyle = refreshStyle
-        
-        super.init(style: .grouped)
-        tableView.keyboardDismissMode = .interactive
-        tableView.delaysContentTouches = true
+        super.init(style: .plain)
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -59,7 +55,7 @@ open class DeclarativeTableViewController: UITableViewController {
     /// - Note: You should probably never call this method manually. Instead, call `rebuildTableViewContent`.
     /// - Note: This method is called as a part of `rebuildTableViewContent`,
     ///         which can be triggered programatically, or when the user pulls-to-refresh.
-    public func setupCells() {
+    open func setupCells() {
         fatalError("`setupCells()` must be overridden in this `DeclarativeTableViewController` subclass.")
     }
     
@@ -132,13 +128,16 @@ open class DeclarativeTableViewController: UITableViewController {
         }
         
         let diffResult = section.reloadData()
-        tableView.insertRows(at: indexPaths(for: diffResult.insertedIndicies),  with: .middle)
-        tableView.deleteRows(at: indexPaths(for: diffResult.deletedIndicies),   with: .middle)
-        tableView.reloadRows(at: indexPaths(for: diffResult.unchangedIndicies), with: .none)
+        tableView.deleteRows(at: indexPaths(for: diffResult.deletedIndicies),   with: .fade)
+        tableView.insertRows(at: indexPaths(for: diffResult.insertedIndicies),  with: .fade)
+        tableView.reloadRows(at: indexPaths(for: diffResult.unchangedIndicies), with: .fade)
     }
     
     override open func viewDidLoad() {
         super.viewDidLoad()
+        tableView.keyboardDismissMode = .interactive
+        tableView.delaysContentTouches = true
+        
         buildTableViewContent()
         
         switch refreshStyle {
@@ -176,7 +175,7 @@ open class DeclarativeTableViewController: UITableViewController {
     
     /// Can be overridden in a subclass to reset any model objects (i.e. fetched arrays)
     /// or perform other preparation before the table view is refreshed and rebuilt.
-    public func tableViewWillRebuild() {
+    open func tableViewWillRebuild() {
         // to be implemented in a subclass
     }
     
