@@ -36,19 +36,19 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
     
     /// Initializes a `ReusableCellSection` displaying instances of `CellType`.
     ///
-    /// Since the `DequeueableCell` protocol specifies the `ModelType` and provides a `decorate(_:)` method
+    /// Since the `ReusableCell` protocol specifies the `ModelType` and provides a `decorate(_:)` method
     /// using that `ModelType`, this initialize automatically uses your `CellType.decorate(_:)` method.
     ///
     /// - Parameters:
     ///   - name: The name of the section, displayed by the Table View in `UITableView.Style.grouped`
-    ///   - cellType: The `DequeueableCell`-conforming `UITableViewCell` subclass to display
+    ///   - cellType: The `ReusableCell`-conforming `UITableViewCell` subclass to display
     ///   - displayIf: A closure specifying whether or not this section should be visible in the UITableView.
     ///   - placeholderCell: An optional `UITableViewCell` instance that is displayed if `items` is `nil`.
     ///        By default, a `LoadingIndicatorCell` instance.
     ///
     ///   - items: A closure that returns an optional array of `CellType.ModelType`.
     ///
-    ///        The exact `ModelType` is specified by the `typealias ModelType = ...` in your `DequeueableCell`
+    ///        The exact `ModelType` is specified by the `typealias ModelType = ...` in your `ReusableCell`
     ///        instance. This closure is called when the cell is initialized, and then subsequently called by the
     ///        `DeclarativeTableView` when you call `reloadData()`.
     ///
@@ -67,7 +67,7 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
         placeholderCell: UITableViewCell? = LoadingIndicatorCell(),
         items: @escaping () -> [CellType.ModelType]?,
         selectionHandler: ((CellType.ModelType, CellType) -> Void)? = nil)
-        where CellType: DequeueableCell, CellType.ModelType: Hashable
+        where CellType: ReusableCell, CellType.ModelType: Hashable
     {
         self.init(
             name: name,
@@ -83,14 +83,14 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
     ///
     /// - Parameters:
     ///   - name: The name of the section, displayed by the Table View in `UITableView.Style.grouped`
-    ///   - cellType: The `DequeueableCell`-conforming `UITableViewCell` subclass to display
+    ///   - cellType: The `ReusableCell`-conforming `UITableViewCell` subclass to display
     ///   - displayIf: A closure specifying whether or not this section should be visible in the UITableView.
     ///   - placeholderCell: An optional `UITableViewCell` instance that is displayed if `items` is `nil`.
     ///        By default, a `LoadingIndicatorCell` instance.
     ///
     ///   - items: A closure that returns an optional array of `CellType.ModelType`.
     ///
-    ///        The exact `ModelType` is specified by the `typealias ModelType = ...` in your `DequeueableCell`
+    ///        The exact `ModelType` is specified by the `typealias ModelType = ...` in your `ReusableCell`
     ///        instance. This closure is called when the cell is initialized, and then subsequently called by the
     ///        `DeclarativeTableView` when you call `reloadData()`.
     ///
@@ -99,7 +99,7 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
     ///
     ///   - decorator: A closure that displays a given `ModelType` instance inside the `UITableViewCell` instance.
     ///
-    ///        If your `UITableViewCell` subclass implements the `DequeueableCell` protocol, this closure can be
+    ///        If your `UITableViewCell` subclass implements the `ReusableCell` protocol, this closure can be
     ///        automatically inferred (`CellType.decorate(_:)`).
     ///
     ///   - selectionHandler: A closure that is called when the user taps a cell in this section.

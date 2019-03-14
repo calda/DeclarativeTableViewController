@@ -9,10 +9,10 @@
 
 // MARK: - SongCell
 
-class SongCell: UITableViewCell, DequeueableCell {
+class SongCell: UITableViewCell, ReusableCell {
 
     
-    // MARK: DequeueableCell
+    // MARK: ReusableCell
     
     typealias ModelType = ViewModel
     

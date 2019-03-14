@@ -12,6 +12,7 @@ public class LoadingIndicatorCell: UITableViewCell {
     
     private var activityIndicator: UIActivityIndicatorView = {
         let activityIndicator = UIActivityIndicatorView(style: .gray)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         activityIndicator.startAnimating()
         return activityIndicator
     }()

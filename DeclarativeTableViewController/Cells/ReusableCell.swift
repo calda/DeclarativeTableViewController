@@ -1,5 +1,5 @@
 //
-//  DequeueableCell.swift
+//  ReusableCell.swift
 //  DeclarativeTableViewController
 //
 //  Created by Cal Stephens on 3/14/19.
@@ -9,9 +9,9 @@
 import UIKit
 
 
-// MARK: DequeueableCell
+// MARK: ReusableCell
 
-public protocol DequeueableCell: class {
+public protocol ReusableCell: class {
     
     associatedtype ModelType
     

@@ -17,7 +17,7 @@ class ListExampleViewController: DeclarativeTableViewController {
     private var currentSong: Song?
     
     init() {
-        super.init(style: .plain)
+        super.init(tableStyle: .plain, refreshStyle: .none)
         display(.allSongs, animated: false)
         configureBarButtonItems()
     }

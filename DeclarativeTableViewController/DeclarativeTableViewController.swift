@@ -34,14 +34,14 @@ open class DeclarativeTableViewController: UITableViewController {
         case none
         
         /// The Table View can be refreshed using the standard Pull to Refresh pattern.
-        /// - Note: When the user pulls to refresh, the table view will call `tableViewWillRefresh`,
+        /// - Note: When the user pulls to refresh, the table view will call `tableViewWillRebuild`,
         ///         and then call `setupCells` again.
         case pullToRefresh
     }
     
-    public init(style: UITableView.Style = .grouped, refreshStyle: RefreshStyle = .none) {
+    public init(tableStyle: UITableView.Style = .grouped, refreshStyle: RefreshStyle) {
         self.refreshStyle = refreshStyle
-        super.init(style: .plain)
+        super.init(style: tableStyle)
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -141,7 +141,6 @@ open class DeclarativeTableViewController: UITableViewController {
             break
         case .pullToRefresh:
             let refreshControl = UIRefreshControl()
-            refreshControl.tintColor = UIColor.white.withAlphaComponent(0.6)
             refreshControl.addTarget(self, action: #selector(refreshTableViewContent), for: .valueChanged)
             self.refreshControl = refreshControl
         }
@@ -187,7 +186,9 @@ open class DeclarativeTableViewController: UITableViewController {
     }
     
     override public final func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return sectionsBeingDisplayed[indexPath.section].createCell(for: indexPath, in: tableView)
+        let cell = sectionsBeingDisplayed[indexPath.section].createCell(for: indexPath, in: tableView)
+        cell.alpha = 1.0
+        return cell
     }
     
     

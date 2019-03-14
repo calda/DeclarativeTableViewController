@@ -18,7 +18,7 @@
 		2E15A6282239CA47009BE659 /* DeclarativeTableViewController.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2E51257722397CEA00B7C5BC /* DeclarativeTableViewController.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2E15A62E2239D1BC009BE659 /* SongCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E15A62D2239D1BC009BE659 /* SongCell.swift */; };
 		2E15A6302239DDC6009BE659 /* ListExampleViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E15A62F2239DDC6009BE659 /* ListExampleViewControllerTests.swift */; };
-		2E15A632223A7385009BE659 /* DequeueableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E15A631223A7385009BE659 /* DequeueableCell.swift */; };
+		2E15A632223A7385009BE659 /* ReusableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E15A631223A7385009BE659 /* ReusableCell.swift */; };
 		2E15A63F223AC07F009BE659 /* We Move Like The Ocean.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E15A634223AC07F009BE659 /* We Move Like The Ocean.m4a */; };
 		2E15A640223AC07F009BE659 /* The Mother We Share.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E15A635223AC07F009BE659 /* The Mother We Share.m4a */; };
 		2E15A641223AC07F009BE659 /* Trying to Be Cool.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E15A636223AC07F009BE659 /* Trying to Be Cool.m4a */; };
@@ -31,6 +31,15 @@
 		2E15A648223AC07F009BE659 /* Rock'n Me.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E15A63D223AC07F009BE659 /* Rock'n Me.m4a */; };
 		2E15A649223AC07F009BE659 /* In The Air Tonight.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E15A63E223AC07F009BE659 /* In The Air Tonight.m4a */; };
 		2E15A64B223AC59A009BE659 /* Eventually.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E15A64A223AC59A009BE659 /* Eventually.m4a */; };
+		2E15A651223AFEF2009BE659 /* MultipleSectionExampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E15A650223AFEF1009BE659 /* MultipleSectionExampleViewController.swift */; };
+		2E15A653223AFF26009BE659 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E15A652223AFF26009BE659 /* Group.swift */; };
+		2E15A656223AFF86009BE659 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E15A655223AFF86009BE659 /* ProfileView.swift */; };
+		2E15A658223AFF96009BE659 /* ProfilePreviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E15A657223AFF96009BE659 /* ProfilePreviewCell.swift */; };
+		2E15A65A223AFFA6009BE659 /* AttributeListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E15A659223AFFA6009BE659 /* AttributeListView.swift */; };
+		2E15A65C223B0657009BE659 /* Constraint Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E15A65B223B0657009BE659 /* Constraint Helpers.swift */; };
+		2E15A65F223B0832009BE659 /* SocialAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E15A65E223B0832009BE659 /* SocialAPI.swift */; };
+		2E15A661223B0C9B009BE659 /* ProfileDisplayable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E15A660223B0C9B009BE659 /* ProfileDisplayable.swift */; };
+		2E15A663223B1DAA009BE659 /* MultipleSectionExampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E15A662223B1DAA009BE659 /* MultipleSectionExampleViewController.swift */; };
 		2E51258322397D4200B7C5BC /* DeclarativeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E51258222397D4200B7C5BC /* DeclarativeTableViewController.swift */; };
 		2E51258D2239808600B7C5BC /* DiffResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E51258C2239808600B7C5BC /* DiffResult.swift */; };
 		2E51258F223980F300B7C5BC /* TableViewSectionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E51258E223980F300B7C5BC /* TableViewSectionProvider.swift */; };
@@ -96,7 +105,7 @@
 		2E15A6242239BE88009BE659 /* Playlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Playlist.swift; sourceTree = "<group>"; };
 		2E15A62D2239D1BC009BE659 /* SongCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongCell.swift; sourceTree = "<group>"; };
 		2E15A62F2239DDC6009BE659 /* ListExampleViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListExampleViewControllerTests.swift; sourceTree = "<group>"; };
-		2E15A631223A7385009BE659 /* DequeueableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DequeueableCell.swift; sourceTree = "<group>"; };
+		2E15A631223A7385009BE659 /* ReusableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReusableCell.swift; sourceTree = "<group>"; };
 		2E15A634223AC07F009BE659 /* We Move Like The Ocean.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "We Move Like The Ocean.m4a"; sourceTree = "<group>"; };
 		2E15A635223AC07F009BE659 /* The Mother We Share.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "The Mother We Share.m4a"; sourceTree = "<group>"; };
 		2E15A636223AC07F009BE659 /* Trying to Be Cool.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Trying to Be Cool.m4a"; sourceTree = "<group>"; };
@@ -109,6 +118,16 @@
 		2E15A63D223AC07F009BE659 /* Rock'n Me.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Rock'n Me.m4a"; sourceTree = "<group>"; };
 		2E15A63E223AC07F009BE659 /* In The Air Tonight.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "In The Air Tonight.m4a"; sourceTree = "<group>"; };
 		2E15A64A223AC59A009BE659 /* Eventually.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Eventually.m4a; sourceTree = "<group>"; };
+		2E15A650223AFEF1009BE659 /* MultipleSectionExampleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleSectionExampleViewController.swift; sourceTree = "<group>"; };
+		2E15A652223AFF26009BE659 /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
+		2E15A655223AFF86009BE659 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		2E15A657223AFF96009BE659 /* ProfilePreviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePreviewCell.swift; sourceTree = "<group>"; };
+		2E15A659223AFFA6009BE659 /* AttributeListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeListView.swift; sourceTree = "<group>"; };
+		2E15A65B223B0657009BE659 /* Constraint Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Constraint Helpers.swift"; sourceTree = "<group>"; };
+		2E15A65D223B0700009BE659 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		2E15A65E223B0832009BE659 /* SocialAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialAPI.swift; sourceTree = "<group>"; };
+		2E15A660223B0C9B009BE659 /* ProfileDisplayable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileDisplayable.swift; sourceTree = "<group>"; };
+		2E15A662223B1DAA009BE659 /* MultipleSectionExampleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleSectionExampleViewController.swift; sourceTree = "<group>"; };
 		2E51257722397CEA00B7C5BC /* DeclarativeTableViewController.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DeclarativeTableViewController.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2E51257B22397CEA00B7C5BC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2E51258222397D4200B7C5BC /* DeclarativeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeclarativeTableViewController.swift; sourceTree = "<group>"; };
@@ -161,6 +180,7 @@
 			isa = PBXGroup;
 			children = (
 				2E15A62C2239D1B4009BE659 /* Music */,
+				2E15A64F223AFEA9009BE659 /* Group Members */,
 				2E15A5F32239AE93009BE659 /* AppDelegate.swift */,
 				2E15A5FC2239AE94009BE659 /* Assets.xcassets */,
 				2E15A5FE2239AE94009BE659 /* LaunchScreen.storyboard */,
@@ -174,6 +194,7 @@
 			children = (
 				2E15A60C2239AE94009BE659 /* Info.plist */,
 				2E15A62F2239DDC6009BE659 /* ListExampleViewControllerTests.swift */,
+				2E15A662223B1DAA009BE659 /* MultipleSectionExampleViewController.swift */,
 			);
 			path = "Demo App UI Tests";
 			sourceTree = "<group>";
@@ -215,6 +236,30 @@
 				2E15A634223AC07F009BE659 /* We Move Like The Ocean.m4a */,
 			);
 			path = "Audio Files";
+			sourceTree = "<group>";
+		};
+		2E15A64F223AFEA9009BE659 /* Group Members */ = {
+			isa = PBXGroup;
+			children = (
+				2E15A650223AFEF1009BE659 /* MultipleSectionExampleViewController.swift */,
+				2E15A652223AFF26009BE659 /* Group.swift */,
+				2E15A65E223B0832009BE659 /* SocialAPI.swift */,
+				2E15A654223AFF6E009BE659 /* Profile Preview Cell */,
+			);
+			path = "Group Members";
+			sourceTree = "<group>";
+		};
+		2E15A654223AFF6E009BE659 /* Profile Preview Cell */ = {
+			isa = PBXGroup;
+			children = (
+				2E15A65D223B0700009BE659 /* README.md */,
+				2E15A657223AFF96009BE659 /* ProfilePreviewCell.swift */,
+				2E15A655223AFF86009BE659 /* ProfileView.swift */,
+				2E15A660223B0C9B009BE659 /* ProfileDisplayable.swift */,
+				2E15A659223AFFA6009BE659 /* AttributeListView.swift */,
+				2E15A65B223B0657009BE659 /* Constraint Helpers.swift */,
+			);
+			path = "Profile Preview Cell";
 			sourceTree = "<group>";
 		};
 		2E51256D22397CEA00B7C5BC = {
@@ -264,7 +309,7 @@
 		2E512596223981C800B7C5BC /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				2E15A631223A7385009BE659 /* DequeueableCell.swift */,
+				2E15A631223A7385009BE659 /* ReusableCell.swift */,
 				2E512598223981C800B7C5BC /* SelectableCell.swift */,
 				2E51259E223981E500B7C5BC /* ConditionalCell.swift */,
 				2E5125A02239820000B7C5BC /* Stock UITableViewCells */,
@@ -475,9 +520,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2E15A651223AFEF2009BE659 /* MultipleSectionExampleViewController.swift in Sources */,
 				2E15A62E2239D1BC009BE659 /* SongCell.swift in Sources */,
 				2E15A6252239BE88009BE659 /* Playlist.swift in Sources */,
+				2E15A65A223AFFA6009BE659 /* AttributeListView.swift in Sources */,
+				2E15A653223AFF26009BE659 /* Group.swift in Sources */,
+				2E15A65F223B0832009BE659 /* SocialAPI.swift in Sources */,
+				2E15A661223B0C9B009BE659 /* ProfileDisplayable.swift in Sources */,
 				2E15A5F42239AE93009BE659 /* AppDelegate.swift in Sources */,
+				2E15A656223AFF86009BE659 /* ProfileView.swift in Sources */,
+				2E15A65C223B0657009BE659 /* Constraint Helpers.swift in Sources */,
+				2E15A658223AFF96009BE659 /* ProfilePreviewCell.swift in Sources */,
 				2E15A5F62239AE93009BE659 /* ListExampleViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -487,6 +540,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2E15A6302239DDC6009BE659 /* ListExampleViewControllerTests.swift in Sources */,
+				2E15A663223B1DAA009BE659 /* MultipleSectionExampleViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -502,7 +556,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2E15A632223A7385009BE659 /* DequeueableCell.swift in Sources */,
+				2E15A632223A7385009BE659 /* ReusableCell.swift in Sources */,
 				2E51259C223981C800B7C5BC /* LoadingIndicatorCell.swift in Sources */,
 				2E51258D2239808600B7C5BC /* DiffResult.swift in Sources */,
 				2E51259F223981E500B7C5BC /* ConditionalCell.swift in Sources */,

@@ -22,8 +22,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = window
         
         let tabBarController = UITabBarController(nibName: nil, bundle: nil)
+        
         tabBarController.viewControllers = [
-            UINavigationController.displaying(ListExampleViewController(), tabBarItemTitle: "Music", image: #imageLiteral(resourceName: "Music Tab Bar Icon"))]
+            UINavigationController.displaying(
+                ListExampleViewController(),
+                tabBarItemTitle: "Music",
+                image: #imageLiteral(resourceName: "Music Tab Bar Icon")),
+            
+            UINavigationController.displaying(
+                MultipleSectionExampleViewController(),
+                tabBarItemTitle: "Group",
+                image: #imageLiteral(resourceName: "Group Tab Bar Icon"))]
         
         window.rootViewController = tabBarController
         window.makeKeyAndVisible()

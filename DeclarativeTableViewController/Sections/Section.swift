@@ -93,7 +93,19 @@ public class Section: TableViewSectionProvider, Equatable {
             return UITableViewCell()
         }
         
-        return cellsToDisplay[indexPath.row]
+        let cell = cellsToDisplay[indexPath.row]
+        
+        // There are few things that make me more upset than nonsense like this,
+        // but there was an issue where refreshing the Table View would cause the
+        // cells in this `Section` to disappear when using `UITableView.RowAnimation.fade`
+        // (in `DemoApp.MultipleSectionExampleViewController`). This didn't happen with
+        // `UITableView.RowAnimation.none` (or any of the other row animations, either).
+        // So in lieu of an actual fix, this workaround seems to do for now.
+        DispatchQueue.main.async {
+            cell.alpha = 1
+        }
+        
+        return cell
     }
     
     public func createCell(for indexPath: IndexPath, in tableView: UITableView) -> UITableViewCell {
