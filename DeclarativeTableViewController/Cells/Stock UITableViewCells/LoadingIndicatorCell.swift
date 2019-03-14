@@ -10,7 +10,7 @@ import UIKit
 
 public class LoadingIndicatorCell: UITableViewCell {
     
-    var activityIndicator: UIActivityIndicatorView = {
+    private var activityIndicator: UIActivityIndicatorView = {
         let activityIndicator = UIActivityIndicatorView(style: .gray)
         activityIndicator.startAnimating()
         return activityIndicator

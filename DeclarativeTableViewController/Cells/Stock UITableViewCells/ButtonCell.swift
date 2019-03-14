@@ -11,22 +11,22 @@ import UIKit
 
 // MARK: - Button Cell
 
-class ButtonCell: UITableViewCell {
+public class ButtonCell: UITableViewCell {
     
-    var title: String {
+    public var title: String {
         didSet {
             titleLabel.text = title
         }
     }
     
-    enum Style {
+    public enum Style {
         case `default`
         case destructive
     }
     
-    var buttonTappedHandler: () -> Void
+    public var buttonTappedHandler: () -> Void
     
-    let titleLabel: UILabel = {
+    private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 18, weight: .bold)
@@ -45,7 +45,7 @@ class ButtonCell: UITableViewCell {
         return activityIndicator
     }()
     
-    init(title: String, style: Style = .default, handler: @escaping () -> Void) {
+    public init(title: String, style: Style = .default, handler: @escaping () -> Void) {
         self.title = title
         self.buttonTappedHandler = handler
         super.init(style: .default, reuseIdentifier: nil)
@@ -73,7 +73,7 @@ class ButtonCell: UITableViewCell {
         ])
     }
     
-    convenience init(title: String, style: Style = .default, handler: @escaping (ButtonCell) -> Void) {
+    public convenience init(title: String, style: Style = .default, handler: @escaping (ButtonCell) -> Void) {
         self.init(title: title, style: style, handler: {})
         self.buttonTappedHandler = { [weak self] in
             guard let self = self else { return }
@@ -85,12 +85,12 @@ class ButtonCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func showActivityIndicator() {
+    public func showActivityIndicator() {
         self.accessoryType = .none
         activityIndicator.startAnimating()
     }
     
-    func hideActivityIndicator() {
+    public func hideActivityIndicator() {
         self.accessoryType = .disclosureIndicator
         activityIndicator.stopAnimating()
     }
@@ -99,11 +99,11 @@ class ButtonCell: UITableViewCell {
 
 extension ButtonCell: SelectableCell {
     
-    var isCurrentlySelectable: Bool {
+    public var isCurrentlySelectable: Bool {
         return !activityIndicator.isAnimating
     }
     
-    func handleSelection() {
+    public func handleSelection() {
         buttonTappedHandler()
     }
     
