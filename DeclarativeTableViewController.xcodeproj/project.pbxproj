@@ -19,6 +19,18 @@
 		2E15A62E2239D1BC009BE659 /* SongCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E15A62D2239D1BC009BE659 /* SongCell.swift */; };
 		2E15A6302239DDC6009BE659 /* ListExampleViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E15A62F2239DDC6009BE659 /* ListExampleViewControllerTests.swift */; };
 		2E15A632223A7385009BE659 /* DequeueableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E15A631223A7385009BE659 /* DequeueableCell.swift */; };
+		2E15A63F223AC07F009BE659 /* We Move Like The Ocean.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E15A634223AC07F009BE659 /* We Move Like The Ocean.m4a */; };
+		2E15A640223AC07F009BE659 /* The Mother We Share.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E15A635223AC07F009BE659 /* The Mother We Share.m4a */; };
+		2E15A641223AC07F009BE659 /* Trying to Be Cool.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E15A636223AC07F009BE659 /* Trying to Be Cool.m4a */; };
+		2E15A642223AC07F009BE659 /* Bunker.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E15A637223AC07F009BE659 /* Bunker.m4a */; };
+		2E15A643223AC07F009BE659 /* Sweet Child O' Mine.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E15A638223AC07F009BE659 /* Sweet Child O' Mine.m4a */; };
+		2E15A644223AC07F009BE659 /* Bambi.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E15A639223AC07F009BE659 /* Bambi.m4a */; };
+		2E15A645223AC07F009BE659 /* Alone.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E15A63A223AC07F009BE659 /* Alone.m4a */; };
+		2E15A646223AC07F009BE659 /* Free Bird.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E15A63B223AC07F009BE659 /* Free Bird.m4a */; };
+		2E15A647223AC07F009BE659 /* Heathrow.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E15A63C223AC07F009BE659 /* Heathrow.m4a */; };
+		2E15A648223AC07F009BE659 /* Rock'n Me.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E15A63D223AC07F009BE659 /* Rock'n Me.m4a */; };
+		2E15A649223AC07F009BE659 /* In The Air Tonight.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E15A63E223AC07F009BE659 /* In The Air Tonight.m4a */; };
+		2E15A64B223AC59A009BE659 /* Eventually.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 2E15A64A223AC59A009BE659 /* Eventually.m4a */; };
 		2E51258322397D4200B7C5BC /* DeclarativeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E51258222397D4200B7C5BC /* DeclarativeTableViewController.swift */; };
 		2E51258D2239808600B7C5BC /* DiffResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E51258C2239808600B7C5BC /* DiffResult.swift */; };
 		2E51258F223980F300B7C5BC /* TableViewSectionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E51258E223980F300B7C5BC /* TableViewSectionProvider.swift */; };
@@ -85,6 +97,18 @@
 		2E15A62D2239D1BC009BE659 /* SongCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongCell.swift; sourceTree = "<group>"; };
 		2E15A62F2239DDC6009BE659 /* ListExampleViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListExampleViewControllerTests.swift; sourceTree = "<group>"; };
 		2E15A631223A7385009BE659 /* DequeueableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DequeueableCell.swift; sourceTree = "<group>"; };
+		2E15A634223AC07F009BE659 /* We Move Like The Ocean.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "We Move Like The Ocean.m4a"; sourceTree = "<group>"; };
+		2E15A635223AC07F009BE659 /* The Mother We Share.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "The Mother We Share.m4a"; sourceTree = "<group>"; };
+		2E15A636223AC07F009BE659 /* Trying to Be Cool.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Trying to Be Cool.m4a"; sourceTree = "<group>"; };
+		2E15A637223AC07F009BE659 /* Bunker.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Bunker.m4a; sourceTree = "<group>"; };
+		2E15A638223AC07F009BE659 /* Sweet Child O' Mine.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Sweet Child O' Mine.m4a"; sourceTree = "<group>"; };
+		2E15A639223AC07F009BE659 /* Bambi.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Bambi.m4a; sourceTree = "<group>"; };
+		2E15A63A223AC07F009BE659 /* Alone.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Alone.m4a; sourceTree = "<group>"; };
+		2E15A63B223AC07F009BE659 /* Free Bird.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Free Bird.m4a"; sourceTree = "<group>"; };
+		2E15A63C223AC07F009BE659 /* Heathrow.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Heathrow.m4a; sourceTree = "<group>"; };
+		2E15A63D223AC07F009BE659 /* Rock'n Me.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Rock'n Me.m4a"; sourceTree = "<group>"; };
+		2E15A63E223AC07F009BE659 /* In The Air Tonight.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "In The Air Tonight.m4a"; sourceTree = "<group>"; };
+		2E15A64A223AC59A009BE659 /* Eventually.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Eventually.m4a; sourceTree = "<group>"; };
 		2E51257722397CEA00B7C5BC /* DeclarativeTableViewController.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DeclarativeTableViewController.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2E51257B22397CEA00B7C5BC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2E51258222397D4200B7C5BC /* DeclarativeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeclarativeTableViewController.swift; sourceTree = "<group>"; };
@@ -136,9 +160,7 @@
 		2E15A5F22239AE93009BE659 /* Demo App */ = {
 			isa = PBXGroup;
 			children = (
-				2E15A5F52239AE93009BE659 /* ListExampleViewController.swift */,
-				2E15A62C2239D1B4009BE659 /* Cells */,
-				2E15A6262239BE8B009BE659 /* Model */,
+				2E15A62C2239D1B4009BE659 /* Music */,
 				2E15A5F32239AE93009BE659 /* AppDelegate.swift */,
 				2E15A5FC2239AE94009BE659 /* Assets.xcassets */,
 				2E15A5FE2239AE94009BE659 /* LaunchScreen.storyboard */,
@@ -165,20 +187,34 @@
 			path = "Unit Tests";
 			sourceTree = "<group>";
 		};
-		2E15A6262239BE8B009BE659 /* Model */ = {
+		2E15A62C2239D1B4009BE659 /* Music */ = {
 			isa = PBXGroup;
 			children = (
+				2E15A633223AC054009BE659 /* Audio Files */,
+				2E15A5F52239AE93009BE659 /* ListExampleViewController.swift */,
 				2E15A6242239BE88009BE659 /* Song.swift */,
-			);
-			path = Model;
-			sourceTree = "<group>";
-		};
-		2E15A62C2239D1B4009BE659 /* Cells */ = {
-			isa = PBXGroup;
-			children = (
 				2E15A62D2239D1BC009BE659 /* SongCell.swift */,
 			);
-			path = Cells;
+			path = Music;
+			sourceTree = "<group>";
+		};
+		2E15A633223AC054009BE659 /* Audio Files */ = {
+			isa = PBXGroup;
+			children = (
+				2E15A63A223AC07F009BE659 /* Alone.m4a */,
+				2E15A639223AC07F009BE659 /* Bambi.m4a */,
+				2E15A637223AC07F009BE659 /* Bunker.m4a */,
+				2E15A64A223AC59A009BE659 /* Eventually.m4a */,
+				2E15A63B223AC07F009BE659 /* Free Bird.m4a */,
+				2E15A63C223AC07F009BE659 /* Heathrow.m4a */,
+				2E15A63E223AC07F009BE659 /* In The Air Tonight.m4a */,
+				2E15A63D223AC07F009BE659 /* Rock'n Me.m4a */,
+				2E15A638223AC07F009BE659 /* Sweet Child O' Mine.m4a */,
+				2E15A635223AC07F009BE659 /* The Mother We Share.m4a */,
+				2E15A636223AC07F009BE659 /* Trying to Be Cool.m4a */,
+				2E15A634223AC07F009BE659 /* We Move Like The Ocean.m4a */,
+			);
+			path = "Audio Files";
 			sourceTree = "<group>";
 		};
 		2E51256D22397CEA00B7C5BC = {
@@ -394,8 +430,20 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2E15A645223AC07F009BE659 /* Alone.m4a in Resources */,
 				2E15A6002239AE94009BE659 /* LaunchScreen.storyboard in Resources */,
+				2E15A641223AC07F009BE659 /* Trying to Be Cool.m4a in Resources */,
+				2E15A648223AC07F009BE659 /* Rock'n Me.m4a in Resources */,
 				2E15A5FD2239AE94009BE659 /* Assets.xcassets in Resources */,
+				2E15A646223AC07F009BE659 /* Free Bird.m4a in Resources */,
+				2E15A640223AC07F009BE659 /* The Mother We Share.m4a in Resources */,
+				2E15A644223AC07F009BE659 /* Bambi.m4a in Resources */,
+				2E15A649223AC07F009BE659 /* In The Air Tonight.m4a in Resources */,
+				2E15A647223AC07F009BE659 /* Heathrow.m4a in Resources */,
+				2E15A63F223AC07F009BE659 /* We Move Like The Ocean.m4a in Resources */,
+				2E15A64B223AC59A009BE659 /* Eventually.m4a in Resources */,
+				2E15A642223AC07F009BE659 /* Bunker.m4a in Resources */,
+				2E15A643223AC07F009BE659 /* Sweet Child O' Mine.m4a in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

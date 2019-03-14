@@ -21,5 +21,6 @@ public protocol TableViewSectionProvider {
     func createCell(for indexPath: IndexPath, in tableView: UITableView) -> UITableViewCell
     func cell(for indexPath: IndexPath, in tableView: UITableView) -> UITableViewCell
     func additionalSectionConfiguration(for tableView: UITableView)
+    func handleSelection(for indexPath: IndexPath, in tableView: UITableView)
     
 }

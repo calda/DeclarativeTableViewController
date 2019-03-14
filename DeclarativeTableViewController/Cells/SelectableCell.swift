@@ -12,7 +12,6 @@
 public protocol SelectableCell: class {
     
     var isCurrentlySelectable: Bool { get }
-    
     func handleSelection()
     
 }

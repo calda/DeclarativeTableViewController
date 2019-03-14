@@ -41,6 +41,7 @@ class ListExampleViewControllerTests: XCTestCase {
         
         app.buttons["Playlists"].tap()
         app.buttons["All Songs"].tap()
+        
         assert(songCount: 12)
     }
 

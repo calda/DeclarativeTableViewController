@@ -194,9 +194,8 @@ open class DeclarativeTableViewController: UITableViewController {
     // MARK: UITableViewDelegate
     
     override public final func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        
-        guard let cell = sectionsBeingDisplayed[indexPath.section].cell(for: indexPath, in: tableView) as? SelectableCell,
-            cell.isCurrentlySelectable else
+        if let cell = sectionsBeingDisplayed[indexPath.section].cell(for: indexPath, in: tableView) as? SelectableCell,
+            !cell.isCurrentlySelectable
         {
             return nil
         }
@@ -205,7 +204,10 @@ open class DeclarativeTableViewController: UITableViewController {
     }
     
     override public final func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let cell = sectionsBeingDisplayed[indexPath.section].cell(for: indexPath, in: tableView) as? SelectableCell {
+        let section = sectionsBeingDisplayed[indexPath.section]
+        section.handleSelection(for: indexPath, in: tableView)
+        
+        if let cell = section.cell(for: indexPath, in: tableView) as? SelectableCell {
             cell.handleSelection()
         }
         

@@ -41,6 +41,10 @@ struct Song: Hashable {
     let artist: String
     let albumArt: UIImage
     
+    var audioFileUrl: URL {
+        return Bundle.main.url(forResource: title, withExtension: "m4a")!
+    }
+    
     fileprivate static let bambi = Song(title: "Bambi", artist: "Hippo Campus", albumArt: #imageLiteral(resourceName: "Bambi"))
     fileprivate static let bunker = Song(title: "Bunker", artist: "Balthazar", albumArt: #imageLiteral(resourceName: "Bunker"))
     fileprivate static let eventually = Song(title: "Eventually", artist: "Tame Impala", albumArt: #imageLiteral(resourceName: "Eventually"))

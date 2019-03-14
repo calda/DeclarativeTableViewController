@@ -9,13 +9,14 @@
 
 // MARK: - SongCell
 
-class SongCell: UITableViewCell, DequeueableCell {
+class SongCell: UITableViewCell {
     
     typealias ModelType = Song
     
     private let albumArtView = UIImageView()
     private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()
+    private let pauseIcon = UIImageView(image: #imageLiteral(resourceName: "Pause"))
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -26,16 +27,22 @@ class SongCell: UITableViewCell, DequeueableCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func display(_ song: Song) {
+    func display(_ song: Song, isCurrentlyPlaying: Bool) {
         titleLabel.text = song.title
         subtitleLabel.text = song.artist
         albumArtView.image = song.albumArt
+        
+        if isCurrentlyPlaying {
+            pauseIcon.isHidden = false
+        } else {
+            pauseIcon.isHidden = true
+        }
     }
     
     private func setupCell() {
         titleLabel.font = .systemFont(ofSize: 16, weight: .semibold)
         subtitleLabel.font = .systemFont(ofSize: 14)
-        subtitleLabel.textColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
+        subtitleLabel.textColor = titleLabel.textColor.withAlphaComponent(0.75)
         albumArtView.layer.cornerRadius = 7
         albumArtView.layer.masksToBounds = true
         
@@ -44,7 +51,7 @@ class SongCell: UITableViewCell, DequeueableCell {
         textStackView.spacing = 3
         textStackView.alignment = .leading
         
-        let horizontalStackView = UIStackView(arrangedSubviews: [albumArtView, textStackView])
+        let horizontalStackView = UIStackView(arrangedSubviews: [albumArtView, textStackView, pauseIcon])
         horizontalStackView.translatesAutoresizingMaskIntoConstraints = false
         horizontalStackView.spacing = 12
         horizontalStackView.alignment = .center
@@ -54,8 +61,11 @@ class SongCell: UITableViewCell, DequeueableCell {
             albumArtView.heightAnchor.constraint(equalToConstant: 60),
             albumArtView.widthAnchor.constraint(equalToConstant: 60),
             
+            pauseIcon.heightAnchor.constraint(equalToConstant: 25),
+            pauseIcon.widthAnchor.constraint(equalToConstant: 25),
+            
             horizontalStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
-            horizontalStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
+            horizontalStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -18),
             horizontalStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             horizontalStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
         ])

@@ -101,7 +101,11 @@ public class Section: TableViewSectionProvider, Equatable {
     }
     
     public func additionalSectionConfiguration(for tableView: UITableView) {
-        return
+        // noop, nothing to configure
+    }
+    
+    public func handleSelection(for indexPath: IndexPath, in tableView: UITableView) {
+        // noop, selection needs to be handled on a per-cell basis. See: `SelectableCell`.
     }
     
 }

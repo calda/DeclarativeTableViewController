@@ -6,12 +6,15 @@
 //  Copyright © 2019 Cal Stephens. All rights reserved.
 //
 
+import AVKit
+
 
 // MARK: - ListExampleViewController
 
 class ListExampleViewController: DeclarativeTableViewController {
     
     var playlist: Playlist!
+    private var currentSong: Song?
     
     init() {
         super.init(style: .plain)
@@ -30,7 +33,13 @@ class ListExampleViewController: DeclarativeTableViewController {
         sections = [
             ReusableCellSection(
                 cellType: SongCell.self,
-                items: { [unowned self] in self.playlist.songs })
+                items: { [unowned self] in
+                    return self.playlist.songs
+                },
+                decorator: { [unowned self] song, cell in
+                    cell.display(song, isCurrentlyPlaying: (song == self.currentSong))
+                },
+                selectionHandler: userSelected(_:in:))
         ]
     }
     
@@ -42,6 +51,24 @@ class ListExampleViewController: DeclarativeTableViewController {
     
     
     // MARK: User Interaction
+    
+    private var currentPlayer: AVAudioPlayer?
+    
+    func userSelected(_ song: Song, in cell: SongCell) {
+        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
+        
+        currentPlayer?.stop()
+        
+        if song == currentSong {
+            currentSong = nil
+        } else {
+            currentSong = song
+            currentPlayer = try? AVAudioPlayer(contentsOf: song.audioFileUrl)
+            currentPlayer?.play()
+        }
+        
+        reloadData(animated: false)
+    }
     
     private func configureBarButtonItems() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(
