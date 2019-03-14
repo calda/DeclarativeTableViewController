@@ -71,20 +71,16 @@ open class DeclarativeTableViewController: UITableViewController {
             section.additionalSectionConfiguration(for: self.tableView)
         }
         
-        reloadData(allowSoftReload: false)
+        reloadData(animated: false)
     }
     
     /// Reloads the UITableView content by updating the visibility of individual sections and cells.
-    public func reloadData() {
-        reloadData(allowSoftReload: true)
-    }
-    
-    private func reloadData(allowSoftReload: Bool) {
+    open func reloadData(animated: Bool = true) {
         let previousSectionCount = sectionsBeingDisplayed.count
         sectionsBeingDisplayed = sections.filter { $0.shouldDisplaySection() && $0.numberOfRows > 0 }
         
         // if there's a different number of sections, do a hard table reload
-        if previousSectionCount != sectionsBeingDisplayed.count || !allowSoftReload {
+        if previousSectionCount != sectionsBeingDisplayed.count || !animated {
             sectionsBeingDisplayed.forEach { $0.reloadData() }
             tableView.reloadData()
         }

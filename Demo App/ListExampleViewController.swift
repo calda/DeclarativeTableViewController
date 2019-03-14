@@ -15,11 +15,8 @@ class ListExampleViewController: DeclarativeTableViewController {
     
     init() {
         super.init(style: .plain)
-        display(.allSongs)
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            title: "Playlists", style: .plain,
-            target: self, action: #selector(selectPlaylist(_:)))
+        display(.allSongs, animated: false)
+        configureBarButtonItems()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -33,33 +30,34 @@ class ListExampleViewController: DeclarativeTableViewController {
         sections = [
             ReusableCellSection(
                 cellType: SongCell.self,
-                items: { [unowned self] in self.playlist.songs },
-                decorator: { song, cell in
-                    cell.display(song)
-                })
+                items: { [unowned self] in self.playlist.songs })
         ]
     }
     
-    private func display(_ playlist: Playlist) {
+    private func display(_ playlist: Playlist, animated: Bool) {
         self.playlist = playlist
         self.title = playlist.name
-        reloadData()
+        reloadData(animated: animated)
     }
     
     
     // MARK: User Interaction
+    
+    private func configureBarButtonItems() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            title: "Playlists", style: .plain,
+            target: self, action: #selector(selectPlaylist(_:)))
+    }
     
     @objc private func selectPlaylist(_ sender: UIBarButtonItem) {
         let alertController = UIAlertController(title: "Select Playlist", message: nil, preferredStyle: .actionSheet)
         
         for playlist in Playlist.all {
             alertController.addAction(UIAlertAction(
-                title: self.playlist == playlist
-                    ? "✓ \(playlist.name)"
-                    : playlist.name,
+                title: (self.playlist == playlist) ? "✓ \(playlist.name)" : playlist.name,
                 style: .default,
                 handler: { _ in
-                    self.display(playlist)
+                    self.display(playlist, animated: true)
             }))
         }
         
@@ -69,4 +67,3 @@ class ListExampleViewController: DeclarativeTableViewController {
     }
     
 }
-

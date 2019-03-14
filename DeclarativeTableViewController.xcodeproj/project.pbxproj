@@ -18,6 +18,7 @@
 		2E15A6282239CA47009BE659 /* DeclarativeTableViewController.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2E51257722397CEA00B7C5BC /* DeclarativeTableViewController.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2E15A62E2239D1BC009BE659 /* SongCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E15A62D2239D1BC009BE659 /* SongCell.swift */; };
 		2E15A6302239DDC6009BE659 /* ListExampleViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E15A62F2239DDC6009BE659 /* ListExampleViewControllerTests.swift */; };
+		2E15A632223A7385009BE659 /* DequeueableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E15A631223A7385009BE659 /* DequeueableCell.swift */; };
 		2E51258322397D4200B7C5BC /* DeclarativeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E51258222397D4200B7C5BC /* DeclarativeTableViewController.swift */; };
 		2E51258D2239808600B7C5BC /* DiffResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E51258C2239808600B7C5BC /* DiffResult.swift */; };
 		2E51258F223980F300B7C5BC /* TableViewSectionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E51258E223980F300B7C5BC /* TableViewSectionProvider.swift */; };
@@ -83,6 +84,7 @@
 		2E15A6242239BE88009BE659 /* Song.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
 		2E15A62D2239D1BC009BE659 /* SongCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongCell.swift; sourceTree = "<group>"; };
 		2E15A62F2239DDC6009BE659 /* ListExampleViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListExampleViewControllerTests.swift; sourceTree = "<group>"; };
+		2E15A631223A7385009BE659 /* DequeueableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DequeueableCell.swift; sourceTree = "<group>"; };
 		2E51257722397CEA00B7C5BC /* DeclarativeTableViewController.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DeclarativeTableViewController.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2E51257B22397CEA00B7C5BC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2E51258222397D4200B7C5BC /* DeclarativeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeclarativeTableViewController.swift; sourceTree = "<group>"; };
@@ -226,8 +228,9 @@
 		2E512596223981C800B7C5BC /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				2E51259E223981E500B7C5BC /* ConditionalCell.swift */,
+				2E15A631223A7385009BE659 /* DequeueableCell.swift */,
 				2E512598223981C800B7C5BC /* SelectableCell.swift */,
+				2E51259E223981E500B7C5BC /* ConditionalCell.swift */,
 				2E5125A02239820000B7C5BC /* Stock UITableViewCells */,
 			);
 			path = Cells;
@@ -451,6 +454,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2E15A632223A7385009BE659 /* DequeueableCell.swift in Sources */,
 				2E51259C223981C800B7C5BC /* LoadingIndicatorCell.swift in Sources */,
 				2E51258D2239808600B7C5BC /* DiffResult.swift in Sources */,
 				2E51259F223981E500B7C5BC /* ConditionalCell.swift in Sources */,
@@ -502,6 +506,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "Demo App/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -521,6 +526,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "Demo App/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (

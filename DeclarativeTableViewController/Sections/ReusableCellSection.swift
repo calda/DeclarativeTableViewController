@@ -11,32 +11,102 @@ import UIKit
 
 // MARK: - ReusableCellSection
 
-/// A more traditional UITableView Section that dequeues reusable cells of a certain predefined type
+/// A homogeneous UITableView Section that dequeues reusable cells of a certain predefined type,
+/// and populates them using an array of Model objects.
 public class ReusableCellSection: TableViewSectionProvider, Equatable {
     
     public var name: String?
     public var shouldDisplaySection: () -> Bool
-    private let reuseIdentifier = UUID().uuidString
-    private let dequeableCellType: AnyClass
     
+    /// The cell to be shown if the current `[Model]?` is nil, or has 0 items.
+    /// (i.e. before the content has finised loading)
+    public var placeholderCell: UITableViewCell?
+    
+    private let dequeableCellType: AnyClass
+    private let reuseIdentifier = UUID().uuidString
+    
+    // These are type-erased so that the Section doesn't have to be generic.
+    // They're all set during the strongly-typed generic init implementations, though,
+    // so this is perfectly safe.
     private var typeErasedItems: [Any]?
     private let retrieveTypeErasedItems: () -> [Any]?
     private let typeErasedDecoratorBlock: (Any, UITableViewCell) -> Void
     private let diffItemArrays: ([Any], [Any]) -> DiffResult
     
-    /// The cell to be shown if the current `[Model]?` is nil, or has 0 items.
-    /// (i.e. before the content has finised loading)
-    public var placeholderCell: UITableViewCell
-    
-    public init<DequeableCell: UITableViewCell, Model: Hashable>(
+    /// Initializes a `ReusableCellSection` displaying instances of `CellType`.
+    ///
+    /// Since the `DequeueableCell` protocol specifies the `ModelType` and provides a `decorate(_:)` method
+    /// using that `ModelType`, this initialize automatically uses your `CellType.decorate(_:)` method.
+    ///
+    /// - Parameters:
+    ///   - name: The name of the section, displayed by the Table View in `UITableView.Style.grouped`
+    ///   - cellType: The `DequeueableCell`-conforming `UITableViewCell` subclass to display
+    ///   - displayIf: A closure specifying whether or not this section should be visible in the UITableView.
+    ///   - placeholderCell: An optional `UITableViewCell` instance that is displayed if `items` is `nil`.
+    ///        By default, a `LoadingIndicatorCell` instance.
+    ///
+    ///   - items: A closure that returns an optional array of `CellType.ModelType`.
+    ///
+    ///        The exact `ModelType` is specified by the `typealias ModelType = ...` in your `DequeueableCell`
+    ///        instance. This closure is called when the cell is initialized, and then subsequently called by the
+    ///        `DeclarativeTableView` when you call `reloadData()`.
+    ///
+    ///        If this closure returns `nil`, the section will display the `placeholderCell`
+    ///        (if it exists). This is especially useful for awaiting network requests.
+    ///
+    public convenience init<CellType: UITableViewCell>(
         name: String? = nil,
-        cellType: DequeableCell.Type,
+        cellType: CellType.Type,
         displayIf condition: @escaping () -> Bool = { true },
-        placeholderCell: UITableViewCell = LoadingIndicatorCell(),
-        items: @escaping () -> [Model]?,
-        decorator: @escaping (Model, DequeableCell) -> Void)
+        placeholderCell: UITableViewCell? = LoadingIndicatorCell(),
+        items: @escaping () -> [CellType.ModelType]?)
+        where CellType: DequeueableCell, CellType.ModelType: Hashable
+    {
+        self.init(
+            name: name,
+            cellType: cellType,
+            displayIf: condition,
+            placeholderCell: placeholderCell,
+            items: items,
+            decorator: { item, cell in
+                cell.display(item)
+        })
+    }
+    
+    /// Initializes a `ReusableCellSection` displaying instances of `CellType`.
+    ///
+    /// - Parameters:
+    ///   - name: The name of the section, displayed by the Table View in `UITableView.Style.grouped`
+    ///   - cellType: The `DequeueableCell`-conforming `UITableViewCell` subclass to display
+    ///   - displayIf: A closure specifying whether or not this section should be visible in the UITableView.
+    ///   - placeholderCell: An optional `UITableViewCell` instance that is displayed if `items` is `nil`.
+    ///        By default, a `LoadingIndicatorCell` instance.
+    ///
+    ///   - items: A closure that returns an optional array of `CellType.ModelType`.
+    ///
+    ///        The exact `ModelType` is specified by the `typealias ModelType = ...` in your `DequeueableCell`
+    ///        instance. This closure is called when the cell is initialized, and then subsequently called by the
+    ///        `DeclarativeTableView` when you call `reloadData()`.
+    ///
+    ///        If this closure returns `nil`, the section will display the `placeholderCell`
+    ///        (if it exists). This is especially useful for awaiting network requests.
+    ///
+    ///   - decorator: A closure that displays a given `ModelType` instance inside the `UITableViewCell` instance.
+    ///
+    ///        If your `UITableViewCell` subclass implements the `DequeueableCell` protocol, this closure can be
+    ///        automatically inferred (`CellType.decorate(_:)`).
+    ///
+    public init<CellType: UITableViewCell, ModelType: Hashable>(
+        name: String? = nil,
+        cellType: CellType.Type,
+        displayIf condition: @escaping () -> Bool = { true },
+        placeholderCell: UITableViewCell? = LoadingIndicatorCell(),
+        items: @escaping () -> [ModelType]?,
+        decorator: @escaping (ModelType, CellType) -> Void)
     {
         if cellType == ConditionalCell.self {
+            // `ConditionalCell` is specifically designed to work with `Section`
+            // (a table view section backed by an array of UITableViewCell instances)
             fatalError("`ReusableCellSection` does not support `ConditionalCell`.")
         }
         
@@ -45,29 +115,29 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
         self.dequeableCellType = cellType
         self.placeholderCell = placeholderCell
         
-        // type-erase the `Model` and `DequeableCell` closures
+        // type-erase the closures
         self.retrieveTypeErasedItems = { return items() }
         self.typeErasedItems = retrieveTypeErasedItems()
         
         self.typeErasedDecoratorBlock = { untypedModel, untypedCell in
-            guard let typedModel = untypedModel as? Model else {
-                fatalError("Unable to reconstruct `\(Model.self)` from `\(type(of: untypedModel))`")
+            guard let typedModel = untypedModel as? ModelType else {
+                fatalError("Unable to reconstruct `\(ModelType.self)` from `\(type(of: untypedModel))`")
             }
             
-            guard let typedCell = untypedCell as? DequeableCell else {
-                fatalError("Unable to reconstruct `\(DequeableCell.self)` from `\(type(of: untypedCell))`")
+            guard let typedCell = untypedCell as? CellType else {
+                fatalError("Unable to reconstruct `\(CellType.self)` from `\(type(of: untypedCell))`")
             }
             
             decorator(typedModel, typedCell)
         }
         
         self.diffItemArrays = { originalUntypedArray, newUntypedArray in
-            guard let originalTypedArray = originalUntypedArray as? [Model] else {
-                fatalError("Unable to reconstruct `\([Model].self)` from `\(type(of: originalUntypedArray))`")
+            guard let originalTypedArray = originalUntypedArray as? [ModelType] else {
+                fatalError("Unable to reconstruct `\([ModelType].self)` from `\(type(of: originalUntypedArray))`")
             }
             
-            guard let newUntypedArray = newUntypedArray as? [Model] else {
-                fatalError("Unable to reconstruct `\([Model].self)` from `\(type(of: originalUntypedArray))`")
+            guard let newUntypedArray = newUntypedArray as? [ModelType] else {
+                fatalError("Unable to reconstruct `\([ModelType].self)` from `\(type(of: originalUntypedArray))`")
             }
             
             return originalTypedArray.diff(against: newUntypedArray)
@@ -106,14 +176,22 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
     }
     
     public var numberOfRows: Int {
-        return max(1, typeErasedItems?.count ?? 0)
+        if let numberOfModelItems = typeErasedItems?.count {
+            return numberOfModelItems
+        } else if placeholderCell != nil {
+            return 1
+        } else {
+            return 0
+        }
     }
     
     public func createCell(for indexPath: IndexPath, in tableView: UITableView) -> UITableViewCell {
-        guard let typeErasedItems = typeErasedItems,
-            !typeErasedItems.isEmpty else
-        {
-            return placeholderCell
+        guard let typeErasedItems = typeErasedItems else {
+            if let placeholderCell = placeholderCell {
+                return placeholderCell
+            } else {
+                return UITableViewCell()
+            }
         }
         
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath)

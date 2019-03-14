@@ -11,20 +11,46 @@ import UIKit
 
 // MARK: - Section
 
-/// A simple UITableView Section backed by an array of UITableViewCells
+/// A simple `UITableView` `Section` backed by an array of `UITableViewCell` instances.
 public class Section: TableViewSectionProvider, Equatable {
     
-    public var name: String?
-    public var shouldDisplaySection: () -> Bool
+    /// The `UITableViewCell` instances managed by this table.
+    ///
+    /// Rather than inserting and removing cells from this array,
+    /// consider using `ConditionalCell`.
+    ///
+    /// The on-screen section is not updated until you call
+    /// `DeclarativeTableViewController.reloadData(animated:)`.
+    ///
     public var cells: [UITableViewCell] {
         didSet {
             reloadData()
         }
     }
     
+    public var name: String?
+    public var shouldDisplaySection: () -> Bool
     private var cellsToDisplay = [UITableViewCell]()
     
-    public init(name: String? = nil, displayIf condition: @escaping () -> Bool = { true }, cells: [UITableViewCell]) {
+    /// Initializes a new `Section`, displaying the given `UITableViewCell` instances.
+    ///
+    /// This `Section` doesn't participate in `UITableViewCell` dequeueing or cell reuse,
+    /// so be cognizant of the potential memory overhead when building your Table View.
+    ///
+    /// `Section` is most appropriate when there is a small, closed, and bounded configuration
+    /// of cells that could be displayed in this section. If the number of cells is potentially unbounded,
+    /// you should more likely be using `ReusableCellSection`.
+    ///
+    /// - Parameters:
+    ///   - name: The name of the section, displayed by the Table View in `UITableView.Style.grouped`
+    ///   - displayIf: A closure specifying whether or not this section should be visible in the UITableView.
+    ///   - cells: The `UITableViewCell` instances to display in this section.
+    ///
+    public init(
+        name: String? = nil,
+        displayIf condition: @escaping () -> Bool = { true },
+        cells: [UITableViewCell])
+    {
         self.name = name
         self.shouldDisplaySection = condition
         self.cells = cells
@@ -34,6 +60,9 @@ public class Section: TableViewSectionProvider, Equatable {
     public static func ==(_ lhs: Section, _ rhs: Section) -> Bool {
         return lhs.name == rhs.name && lhs.cells == rhs.cells
     }
+    
+    
+    // MARK: TableViewSectionProvider
     
     @discardableResult
     public func reloadData() -> DiffResult {
@@ -54,9 +83,6 @@ public class Section: TableViewSectionProvider, Equatable {
         
         return cellsBeforeReload.diff(against: cellsToDisplay)
     }
-    
-    
-    // MARK: TableViewSectionProvider
     
     public var numberOfRows: Int {
         return cellsToDisplay.count

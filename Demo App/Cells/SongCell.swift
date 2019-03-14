@@ -9,7 +9,9 @@
 
 // MARK: - SongCell
 
-class SongCell: UITableViewCell {
+class SongCell: UITableViewCell, DequeueableCell {
+    
+    typealias ModelType = Song
     
     private let albumArtView = UIImageView()
     private let titleLabel = UILabel()
@@ -56,7 +58,7 @@ class SongCell: UITableViewCell {
             horizontalStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
             horizontalStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             horizontalStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
-            ])
+        ])
     }
     
 }

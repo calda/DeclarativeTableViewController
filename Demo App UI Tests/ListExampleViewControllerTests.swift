@@ -25,7 +25,7 @@ class ListExampleViewControllerTests: XCTestCase {
         
         app.buttons["Playlists"].tap()
         app.buttons["Indie"].tap()
-        assert(songCount: 5)
+        assert(songCount: 7)
         
         app.buttons["Playlists"].tap()
         app.buttons["Classic Rock"].tap()
@@ -37,17 +37,22 @@ class ListExampleViewControllerTests: XCTestCase {
         
         app.buttons["Playlists"].tap()
         app.buttons["Classic Rock"].tap()
-        assert(songCount: 7)
+        assert(songCount: 5)
+        
+        app.buttons["Playlists"].tap()
+        app.buttons["All Songs"].tap()
+        assert(songCount: 12)
     }
 
-    private func assert(songCount: Int) {
+    private func assert(songCount: Int, file: StaticString = #file, line: UInt = #line) {
         expectation(
-            for: NSPredicate(format: "count == \(songCount * 2)"),
-            evaluatedWith: app.tables.staticTexts,
+            for: NSPredicate(format: "count == \(songCount)"),
+            evaluatedWith: app.tables.cells,
             handler: nil)
         
-        waitForExpectations(timeout: 10, handler: nil)
-        XCTAssertEqual(app.tables.staticTexts.count, songCount * 2)
+        waitForExpectations(timeout: 10, handler: { _ in
+            XCTAssertEqual(self.app.tables.cells.count, songCount, file: file, line: line)
+        })
     }
     
 }
