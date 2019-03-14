@@ -57,6 +57,9 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
     ///
     ///   - selectionHandler: A closure that is called when the user taps a cell in this section.
     ///
+    /// - Note: If you're getting an error "Cannot convert value of type `() -> [CellType.ModelType]`
+    ///      to expected argument type `() -> [_]?`", make sure that `SongCell.ModelType` conforms to `Hashable`.
+    ///
     public convenience init<CellType: UITableViewCell>(
         name: String? = nil,
         cellType: CellType.Type,
@@ -100,6 +103,9 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
     ///        automatically inferred (`CellType.decorate(_:)`).
     ///
     ///   - selectionHandler: A closure that is called when the user taps a cell in this section.
+    ///
+    /// - Note: If you're getting an error "Cannot convert value of type `() -> [ModelType]` to
+    ///      expected argument type `() -> [_]?`", make sure that `SongCell.ModelType` conforms to `Hashable`.
     ///
     public init<CellType: UITableViewCell, ModelType: Hashable>(
         name: String? = nil,

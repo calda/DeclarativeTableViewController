@@ -34,10 +34,11 @@ class ListExampleViewController: DeclarativeTableViewController {
             ReusableCellSection(
                 cellType: SongCell.self,
                 items: { [unowned self] in
-                    return self.playlist.songs
-                },
-                decorator: { [unowned self] song, cell in
-                    cell.display(song, isCurrentlyPlaying: (song == self.currentSong))
+                    self.playlist.songs.map { song in
+                        SongCell.ViewModel(
+                            song: song,
+                            isCurrentlyPlaying: self.currentSong == song)
+                    }
                 },
                 selectionHandler: userSelected(_:in:))
         ]
@@ -50,25 +51,28 @@ class ListExampleViewController: DeclarativeTableViewController {
     }
     
     
-    // MARK: User Interaction
+    // MARK: Song Selection and Playback
     
     private var currentPlayer: AVAudioPlayer?
     
-    func userSelected(_ song: Song, in cell: SongCell) {
+    func userSelected(_ model: SongCell.ViewModel, in cell: SongCell) {
         try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
         
         currentPlayer?.stop()
         
-        if song == currentSong {
+        if model.song == currentSong {
             currentSong = nil
         } else {
-            currentSong = song
-            currentPlayer = try? AVAudioPlayer(contentsOf: song.audioFileUrl)
+            currentSong = model.song
+            currentPlayer = try? AVAudioPlayer(contentsOf: model.song.audioFileUrl)
             currentPlayer?.play()
         }
         
         reloadData(animated: false)
     }
+    
+    
+    // MARK: Playlist Selection
     
     private func configureBarButtonItems() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(

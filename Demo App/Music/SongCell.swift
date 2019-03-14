@@ -9,9 +9,32 @@
 
 // MARK: - SongCell
 
-class SongCell: UITableViewCell {
+class SongCell: UITableViewCell, DequeueableCell {
+
     
-    typealias ModelType = Song
+    // MARK: DequeueableCell
+    
+    typealias ModelType = ViewModel
+    
+    struct ViewModel: Hashable {
+        let song: Song
+        let isCurrentlyPlaying: Bool
+    }
+    
+    func display(_ model: ViewModel) {
+        titleLabel.text = model.song.title
+        subtitleLabel.text = model.song.artist
+        albumArtView.image = model.song.albumArt
+        
+        if model.isCurrentlyPlaying {
+            pauseIcon.isHidden = false
+        } else {
+            pauseIcon.isHidden = true
+        }
+    }
+    
+    
+    // MARK: Instance Setup
     
     private let albumArtView = UIImageView()
     private let titleLabel = UILabel()
@@ -26,18 +49,7 @@ class SongCell: UITableViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    func display(_ song: Song, isCurrentlyPlaying: Bool) {
-        titleLabel.text = song.title
-        subtitleLabel.text = song.artist
-        albumArtView.image = song.albumArt
-        
-        if isCurrentlyPlaying {
-            pauseIcon.isHidden = false
-        } else {
-            pauseIcon.isHidden = true
-        }
-    }
+
     
     private func setupCell() {
         titleLabel.font = .systemFont(ofSize: 16, weight: .semibold)
