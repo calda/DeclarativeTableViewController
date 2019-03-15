@@ -29,7 +29,9 @@ public class Section: TableViewSectionProvider, Equatable {
     }
     
     public var name: String?
-    public var shouldDisplaySection: () -> Bool
+    public var shouldDisplaySection = true
+    
+    private var displayCondition: () -> Bool
     private var cellsToDisplay = [UITableViewCell]()
     
     /// Initializes a new `Section`, displaying the given `UITableViewCell` instances.
@@ -52,7 +54,7 @@ public class Section: TableViewSectionProvider, Equatable {
         cells: [UITableViewCell])
     {
         self.name = name
-        self.shouldDisplaySection = condition
+        self.displayCondition = condition
         self.cells = cells
         reloadData()
     }
@@ -69,10 +71,12 @@ public class Section: TableViewSectionProvider, Equatable {
         let cellsBeforeReload = cellsToDisplay
         
         cellsToDisplay = cells.compactMap { cell in
-            // support `ConditionalCell`
-            if let conditionalCell = cell as? ConditionalCell {
-                if conditionalCell.shouldDisplayCell() {
-                    return conditionalCell.cellToDisplay
+            // support `PassthroughCell`
+            if let passthroughCell = cell as? PassthroughCell {
+                passthroughCell.reloadData()
+                
+                if let childToDisplay = passthroughCell.childToDisplay {
+                    return childToDisplay
                 } else {
                     return nil
                 }
@@ -81,6 +85,7 @@ public class Section: TableViewSectionProvider, Equatable {
             return cell
         }
         
+        shouldDisplaySection = displayCondition() && cellsToDisplay.count > 0
         return cellsBeforeReload.diff(against: cellsToDisplay)
     }
     
@@ -94,6 +99,13 @@ public class Section: TableViewSectionProvider, Equatable {
         }
         
         let cell = cellsToDisplay[indexPath.row]
+        
+        // configure the cell's selectablility
+        if let selectableCell = cell as? SelectableCell, selectableCell.isCurrentlySelectable {
+            cell.selectionStyle = selectableCell.preferredSelectionStyle
+        } else {
+            cell.selectionStyle = .none
+        }
         
         // There are few things that make me more upset than nonsense like this,
         // but there was an issue where refreshing the Table View would cause the
@@ -116,8 +128,12 @@ public class Section: TableViewSectionProvider, Equatable {
         // noop, nothing to configure
     }
     
+    public func cellIsSelectable(for indexPath: IndexPath, in tableView: UITableView) -> Bool {
+        return cell(for: indexPath, in: tableView) is SelectableCell
+    }
+    
     public func handleSelection(for indexPath: IndexPath, in tableView: UITableView) {
-        // noop, selection needs to be handled on a per-cell basis. See: `SelectableCell`.
+        (cell(for: indexPath, in: tableView) as? SelectableCell)?.handleSelection()
     }
     
 }

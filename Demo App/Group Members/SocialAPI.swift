@@ -12,22 +12,26 @@ enum SocialAPI {
     
     private static var hasFetchedUsersBefore = false
     
-    static func fetchUsers(in group: Group, completionHandler: @escaping ([User]) -> Void) {
+    static func fetchUsers(in group: Group, completionHandler: @escaping (Group, [User]) -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.7, execute: {
+            let users: [User]
             
             // simulate as if somebody joined the group between the first load and the following refresh
             if !SocialAPI.hasFetchedUsersBefore {
-                completionHandler(Array(sampleUsers[1...]))
+                users = Array(sampleUsers[1...])
+                SocialAPI.hasFetchedUsersBefore = true
             } else {
-                completionHandler(sampleUsers)
+                users = sampleUsers
             }
             
-            SocialAPI.hasFetchedUsersBefore = true
+            var mutableGroup = group
+            mutableGroup.memberCount = users.count
+            completionHandler(mutableGroup, users)
         })
     }
     
     public static var sampleGroup = Group(
-        memberCount: sampleUsers.count,
+        memberCount: sampleUsers.count - 1,
         image: #imageLiteral(resourceName: "itunes"),
         name: "Music Lovers",
         description: "We love music of all kinds.",

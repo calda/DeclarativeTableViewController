@@ -90,25 +90,41 @@ open class DeclarativeTableViewController: UITableViewController {
         buildTableViewContent()
         
         if animated {
-            let transition = CATransition()
-            transition.type = .fade
-            transition.duration = 0.2
-            transition.timingFunction = CAMediaTimingFunction(name: .easeIn)
-            self.view.layer.add(transition, forKey: nil)
+            playFadeTransition()
         }
     }
     
     /// Reloads the UITableView content by updating the visibility of individual sections and cells.
     open func reloadData(animated: Bool = true) {
         let previousSectionCount = sectionsBeingDisplayed.count
-        sectionsBeingDisplayed = sections.filter { $0.shouldDisplaySection() && $0.numberOfRows > 0 }
+        
+        let _sectionsBeingDisplayed = sections.compactMap { section -> (TableViewSectionProvider, DiffResult)? in
+            let diffResult = section.reloadData()
+            
+            if section.shouldDisplaySection {
+                return (section, diffResult)
+            } else {
+                return nil
+            }
+        }
+        
+        self.sectionsBeingDisplayed = _sectionsBeingDisplayed.map { $0.0 }
         
         // If there's a different number of sections, do a hard table reload
+        //
+        // TODO: This could be rigged up to do a soft reload, but the Table View animation
+        // insert/deletion math is really tricky to get right.
         guard previousSectionCount == sectionsBeingDisplayed.count,
             animated else
         {
-            sectionsBeingDisplayed.forEach { $0.reloadData() }
+            sections.forEach { $0.reloadData() }
+            sectionsBeingDisplayed = sections.filter { $0.shouldDisplaySection }
             tableView.reloadData()
+            
+            if animated {
+                UISelectionFeedbackGenerator().selectionChanged()
+            }
+            
             return
         }
         
@@ -125,9 +141,7 @@ open class DeclarativeTableViewController: UITableViewController {
         var sectionsToDeferReloading = [Int]()
         
         // First, do an insert/deletion reload of all of the sections that changed their row count
-        for (sectionIndex, section) in sectionsBeingDisplayed.enumerated() {
-            let diffResult = section.reloadData()
-            
+        for (sectionIndex, (_, diffResult)) in _sectionsBeingDisplayed.enumerated() {
             // defer the reload of sections that don't change their cell count
             if diffResult.deletedIndicies.isEmpty && diffResult.insertedIndicies.isEmpty {
                 sectionsToDeferReloading.append(sectionIndex)
@@ -157,9 +171,17 @@ open class DeclarativeTableViewController: UITableViewController {
         tableView.contentInset.bottom = _bottomContentInset
         
         // end any in-progress refreshes
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
             self?.tableViewDidFinishRefreshing()
         }
+    }
+    
+    private func playFadeTransition() {
+        let transition = CATransition()
+        transition.type = .fade
+        transition.duration = 0.2
+        transition.timingFunction = CAMediaTimingFunction(name: .easeIn)
+        self.view.layer.add(transition, forKey: nil)
     }
     
     
@@ -247,22 +269,16 @@ open class DeclarativeTableViewController: UITableViewController {
     // MARK: UITableViewDelegate
     
     override public final func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        if let cell = sectionsBeingDisplayed[indexPath.section].cell(for: indexPath, in: tableView) as? SelectableCell,
-            !cell.isCurrentlySelectable
-        {
+        if sectionsBeingDisplayed[indexPath.section].cellIsSelectable(for: indexPath, in: tableView) {
+            return indexPath
+        } else {
             return nil
         }
-        
-        return indexPath
     }
     
     override public final func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let section = sectionsBeingDisplayed[indexPath.section]
         section.handleSelection(for: indexPath, in: tableView)
-        
-        if let cell = section.cell(for: indexPath, in: tableView) as? SelectableCell {
-            cell.handleSelection()
-        }
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.05, execute: {
             tableView.selectRow(at: nil, animated: true, scrollPosition: .none)

@@ -11,14 +11,24 @@ import UIKit
 
 // MARK: - ConditionalCell
 
-public class ConditionalCell: UITableViewCell {
+/// A specialized cell that conditionally displays its child based on a `displayCondition` closure.
+public class ConditionalCell: UITableViewCell, PassthroughCell {
     
-    public let cellToDisplay: UITableViewCell
-    public let shouldDisplayCell: () -> Bool
+    let childCell: UITableViewCell
+    var shouldDisplayChild: Bool
+    private let displayCondition: () -> Bool
+    
+    func reloadImmediateChild() {
+        shouldDisplayChild = displayCondition()
+    }
+    
+    
+    // MARK: Initalization
     
     public init(_ cell: UITableViewCell, displayIf condition: @escaping () -> Bool) {
-        self.cellToDisplay = cell
-        self.shouldDisplayCell = condition
+        self.childCell = cell
+        self.displayCondition = condition
+        self.shouldDisplayChild = displayCondition()
         super.init(style: .default, reuseIdentifier: nil)
     }
     

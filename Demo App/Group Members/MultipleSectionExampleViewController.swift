@@ -10,13 +10,13 @@ import UIKit
 
 class MultipleSectionExampleViewController: DeclarativeTableViewController {
     
-    let group = SocialAPI.sampleGroup
+    var group = SocialAPI.sampleGroup
     var groupMembers: [User]?
-    var viewGroupAsAdministrator: Bool = true
+    var viewGroupAsAdministrator = false
     
     init() {
         super.init(tableStyle: .grouped, refreshStyle: .pullToRefresh)
-        title = "Group"
+        configureNavigationItem()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -28,8 +28,6 @@ class MultipleSectionExampleViewController: DeclarativeTableViewController {
     
     override func setupCells() {
         
-        // TODO: make it possible to switch between admin and regular member
-        
         let viewingAsAdministrator = { [unowned self] in
             return self.viewGroupAsAdministrator
         }
@@ -38,40 +36,77 @@ class MultipleSectionExampleViewController: DeclarativeTableViewController {
             return !self.viewGroupAsAdministrator
         }
         
-        
         sections = [
             Section(cells: [
-                ProfilePreviewCell(group),
-                
-                ConditionalCell(
-                    ButtonCell(title: "Edit Group", handler: { return }),
-                    displayIf: viewingAsAdministrator)]),
+                AutoupdatingCell(
+                    ProfilePreviewCell(group),
+                    onReload: { [unowned self] in $0.display(self.group) })]),
             
             Section(cells: [
-                ConditionalCell(
-                    ButtonCell(title: "Invite Your Friends", handler: { return }),
-                    displayIf: viewingAsAdministrator),
-                
-                ConditionalCell(
-                    ButtonCell(title: "Delete Group", style: .destructive, handler: { return }),
-                    displayIf: viewingAsAdministrator),
+                ButtonCell(title: "Invite Your Friends", handler: { return }),
                 
                 ConditionalCell(
                     ButtonCell(title: "Leave Group", style: .destructive, handler: { return }),
                     displayIf: viewingAsRegularMember)]),
             
+            Section(
+                name: "Admin Tools",
+                displayIf: viewingAsAdministrator,
+                cells: [
+                    ButtonCell(title: "Edit Group", handler: { return }),
+                    
+                    ButtonCell(title: "Delete Group", style: .destructive, handler: { return })]),
+            
             ReusableCellSection(
                 name: "Members",
                 cellType: ProfilePreviewCell.self,
                 items: { [unowned self] in self.groupMembers }),
-            
         ]
         
-        
-        SocialAPI.fetchUsers(in: group) { users in
+        SocialAPI.fetchUsers(in: group) { updatedGroup, users in
+            self.group = updatedGroup
             self.groupMembers = users
             self.reloadData()
         }
+    }
+    
+    
+    // MARK: User Status selection
+    
+    private func configureNavigationItem() {
+        navigationItem.title = "Group"
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            title: "Viewing as Member",
+            style: .plain,
+            target: self,
+            action: #selector(selectUserStatus(_:)))
+    }
+    
+    @objc private func selectUserStatus(_ sender: UIBarButtonItem) {
+        let alertController = UIAlertController(title: "View group as...", message: nil, preferredStyle: .actionSheet)
+        
+        alertController.addAction(UIAlertAction(
+            title: (self.viewGroupAsAdministrator) ? "✓ Admin" : "Admin",
+            style: .default,
+            handler: { _ in
+                self.navigationItem.rightBarButtonItem?.title = "Viewing as Admin"
+                self.viewGroupAsAdministrator = true
+                self.reloadData()
+        }))
+        
+        alertController.addAction(UIAlertAction(
+            title: (!self.viewGroupAsAdministrator) ? "✓ Member" : "Member",
+            style: .default,
+            handler: { _ in
+                self.navigationItem.rightBarButtonItem?.title = "Viewing as Member"
+                self.viewGroupAsAdministrator = false
+                self.reloadData()
+        }))
+        
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alertController.popoverPresentationController?.barButtonItem = sender
+        present(alertController, animated: true)
     }
     
 }

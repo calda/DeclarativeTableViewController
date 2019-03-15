@@ -11,6 +11,7 @@ import UIKit
 
 // MARK: ReusableCell
 
+/// A `UITableViewCell` that can be reused. See: `ReusableCellSection`.
 public protocol ReusableCell: class {
     
     associatedtype ModelType

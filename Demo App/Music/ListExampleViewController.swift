@@ -76,8 +76,10 @@ class ListExampleViewController: DeclarativeTableViewController {
     
     private func configureBarButtonItems() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            title: "Playlists", style: .plain,
-            target: self, action: #selector(selectPlaylist(_:)))
+            title: "Playlists",
+            style: .plain,
+            target: self,
+            action: #selector(selectPlaylist(_:)))
     }
     
     @objc private func selectPlaylist(_ sender: UIBarButtonItem) {

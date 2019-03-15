@@ -23,24 +23,49 @@ class MultipleSectionExampleViewController: XCTestCase {
     // TODO: these tests are wrong now
     
     func testCanReloadTableContent() {
-        assert(groupMemberCount: 5)
+        assert(groupMemberCount: 5, viewingAsAdmin: false)
         pullToRefresh()
-        assert(groupMemberCount: 6)
+        assert(groupMemberCount: 6, viewingAsAdmin: false)
         pullToRefresh()
-        assert(groupMemberCount: 6)
+        assert(groupMemberCount: 6, viewingAsAdmin: false)
+    }
+    
+    func testCanChangeUserStatus() {
+        assert(groupMemberCount: 5, viewingAsAdmin: false)
+        
+        app.buttons["Viewing as Member"].tap()
+        app.buttons["Admin"].tap()
+        assert(groupMemberCount: 5, viewingAsAdmin: true)
+        
+        app.buttons["Viewing as Admin"].tap()
+        app.buttons["Member"].tap()
+        assert(groupMemberCount: 5, viewingAsAdmin: false)
+        
+        pullToRefresh()
+        assert(groupMemberCount: 6, viewingAsAdmin: false)
+        
+        app.buttons["Viewing as Member"].tap()
+        app.buttons["Admin"].tap()
+        assert(groupMemberCount: 6, viewingAsAdmin: true)
     }
     
     
     // MARK: Helpers
     
-    private func assert(groupMemberCount: Int, file: StaticString = #file, line: UInt = #line) {
+    private func assert(groupMemberCount: Int, viewingAsAdmin: Bool, file: StaticString = #file, line: UInt = #line) {
+        let expectedTotalCellCount = groupMemberCount + (viewingAsAdmin ? 4 : 3)
+        
         expectation(
-            for: NSPredicate(format: "count == \(groupMemberCount + 1)"),
+            for: NSPredicate(format: "count == \(expectedTotalCellCount)"),
             evaluatedWith: app.tables.cells,
             handler: nil)
         
         waitForExpectations(timeout: 10, handler: { _ in
-            XCTAssertEqual(self.app.tables.cells.count, groupMemberCount + 1, file: file, line: line)
+            XCTAssertEqual(self.app.tables.cells.count, expectedTotalCellCount, file: file, line: line)
+            
+            XCTAssertEqual(
+                self.app.tables.cells.element(boundBy: 0).staticTexts.element(boundBy: 1).label,
+                "\(groupMemberCount) members")
         })
     }
     

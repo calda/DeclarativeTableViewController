@@ -16,7 +16,8 @@ import UIKit
 public class ReusableCellSection: TableViewSectionProvider, Equatable {
     
     public var name: String?
-    public var shouldDisplaySection: () -> Bool
+    public var shouldDisplaySection = true
+    private let displayCondition: () -> Bool
     
     /// The cell to be shown if the current `[Model]?` is nil, or has 0 items.
     /// (i.e. before the content has finised loading)
@@ -32,7 +33,7 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
     private let retrieveTypeErasedItems: () -> [Any]?
     private let typeErasedDecorator: (Any, UITableViewCell) -> Void
     private let diffItemArrays: ([Any], [Any]) -> DiffResult
-    private let typeErasedSelectionHandler: (Any, UITableViewCell) -> Void
+    private let typeErasedSelectionHandler: ((Any, UITableViewCell) -> Void)?
     
     /// Initializes a `ReusableCellSection` displaying instances of `CellType`.
     ///
@@ -116,14 +117,14 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
         decorator: @escaping (ModelType, CellType) -> Void,
         selectionHandler: ((ModelType, CellType) -> Void)? = nil)
     {
-        if cellType == ConditionalCell.self {
-            // `ConditionalCell` is specifically designed to work with `Section`
+        if cellType is PassthroughCell {
+            // `PassthroughCell` is specifically designed to work with `Section`
             // (a table view section backed by an array of UITableViewCell instances)
-            fatalError("`ReusableCellSection` does not support `ConditionalCell`.")
+            fatalError("`ReusableCellSection` does not support `PassthroughCell`.")
         }
         
         self.name = name
-        self.shouldDisplaySection = condition
+        self.displayCondition = condition
         self.dequeableCellType = cellType
         self.placeholderCell = placeholderCell
         
@@ -145,10 +146,14 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
             decorator(model, cell)
         }
         
-        self.typeErasedSelectionHandler = { untypedModel, untypedCell in
-            let model = unerase(untypedModel, of: ModelType.self)
-            let cell = unerase(untypedCell, of: CellType.self)
-            selectionHandler?(model, cell)
+        if let selectionHandler = selectionHandler {
+            self.typeErasedSelectionHandler = { untypedModel, untypedCell in
+                let model = unerase(untypedModel, of: ModelType.self)
+                let cell = unerase(untypedCell, of: CellType.self)
+                selectionHandler(model, cell)
+            }
+        } else {
+            self.typeErasedSelectionHandler = nil
         }
         
         self.diffItemArrays = { originalUntypedArray, newUntypedArray in
@@ -156,6 +161,8 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
             let newArray = unerase(newUntypedArray, of: [ModelType].self)
             return originalArray.diff(against: newArray)
         }
+        
+        reloadData()
     }
     
     public static func == (lhs: ReusableCellSection, rhs: ReusableCellSection) -> Bool {
@@ -165,10 +172,13 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
     
     // MARK: TableViewSectionProvider
     
+    @discardableResult
     public func reloadData() -> DiffResult {
         let optionalItemsBeforeReload = typeErasedItems
         typeErasedItems = retrieveTypeErasedItems()
         let optionalItemsAfterReload = typeErasedItems
+        
+        shouldDisplaySection = displayCondition() && numberOfRows > 0
         
         switch (optionalItemsBeforeReload, optionalItemsAfterReload) {
         // Placeholder -> Placeholder
@@ -209,6 +219,11 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
         }
         
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath)
+        
+        if typeErasedSelectionHandler == nil {
+            cell.selectionStyle = .none
+        }
+        
         typeErasedDecorator(typeErasedItems[indexPath.row], cell)
         return cell
     }
@@ -221,12 +236,16 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
         tableView.register(dequeableCellType, forCellReuseIdentifier: reuseIdentifier)
     }
     
+    public func cellIsSelectable(for indexPath: IndexPath, in tableView: UITableView) -> Bool {
+        return typeErasedSelectionHandler != nil
+    }
+    
     public func handleSelection(for indexPath: IndexPath, in tableView: UITableView) {
         guard let typeErasedItems = typeErasedItems else {
             return
         }
         
-        typeErasedSelectionHandler(typeErasedItems[indexPath.item], cell(for: indexPath, in: tableView))
+        typeErasedSelectionHandler?(typeErasedItems[indexPath.item], cell(for: indexPath, in: tableView))
     }
     
 }
