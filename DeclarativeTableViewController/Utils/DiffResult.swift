@@ -6,6 +6,8 @@
 //  Copyright © 2019 Cal Stephens. All rights reserved.
 //
 
+import Foundation
+
 
 // MARK: - DiffResult
 
@@ -74,3 +76,13 @@ extension Array where Element: Hashable {
     
 }
 
+
+// MARK: Set<Int> + IndexPath
+
+extension Collection where Element == Int {
+    
+    func indexPaths(in section: Int) -> [IndexPath] {
+        return map { IndexPath(row: $0, section: section) }
+    }
+    
+}

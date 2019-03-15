@@ -46,7 +46,7 @@ class ListExampleViewController: DeclarativeTableViewController {
     
     private func display(_ playlist: Playlist, animated: Bool) {
         self.playlist = playlist
-        self.title = playlist.name
+        navigationItem.title = playlist.name
         reloadData(animated: animated)
     }
     

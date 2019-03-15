@@ -20,6 +20,8 @@ class MultipleSectionExampleViewController: XCTestCase {
         app.tabBars.buttons["Group"].tap()
     }
 
+    // TODO: these tests are wrong now
+    
     func testCanReloadTableContent() {
         assert(groupMemberCount: 5)
         pullToRefresh()

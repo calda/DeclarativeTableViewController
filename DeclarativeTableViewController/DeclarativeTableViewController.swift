@@ -79,54 +79,51 @@ open class DeclarativeTableViewController: UITableViewController {
         let previousSectionCount = sectionsBeingDisplayed.count
         sectionsBeingDisplayed = sections.filter { $0.shouldDisplaySection() && $0.numberOfRows > 0 }
         
-        // if there's a different number of sections, do a hard table reload
-        if previousSectionCount != sectionsBeingDisplayed.count || !animated {
+        // If there's a different number of sections, do a hard table reload
+        guard previousSectionCount == sectionsBeingDisplayed.count,
+            animated else
+        {
             sectionsBeingDisplayed.forEach { $0.reloadData() }
             tableView.reloadData()
-        }
-            
-            // otherwise, do a soft reload of the individual sections
-        else {
-            tableView.beginUpdates()
-            sectionsBeingDisplayed.enumerated().forEach { indexOfSection, section in
-                updateSectionCellsAsPartOfBatchUpdate(section, at: indexOfSection)
-            }
-            tableView.endUpdates()
-        }
-    }
-    
-    private func reload<SectionType: TableViewSectionProvider & Equatable>(
-        _ section: SectionType?,
-        animation: UITableView.RowAnimation = .automatic)
-    {
-        guard let section = section,
-            let indexOfSection = sectionsBeingDisplayed.index(of: section) else
-        {
             return
         }
         
-        let shouldBeDisplayingCell = section.shouldDisplaySection()
-        let isDisplayingCell = sectionsBeingDisplayed.index(of: section) != nil
+        // Work around an issue where the table jump erratically when reloading in some conditions.
+        // This seems to have to do with the Table View miscalculating its new contentSize on reload
+        // (which happens here because the entire system is built around `UITableView.automaticDimension`
+        // https://stackoverflow.com/a/53113789/2530060
+        let _bottomContentInset = tableView.contentInset.bottom
+        tableView.contentInset.bottom = 300
+            
+        // Do an animated reload of the individual sections
+        tableView.beginUpdates()
         
-        // if this section is changing its visibility, we have to do a hard reload
-        if shouldBeDisplayingCell != isDisplayingCell {
-            self.reloadData()
-        } else {
-            tableView.beginUpdates()
-            updateSectionCellsAsPartOfBatchUpdate(section, at: indexOfSection)
-            tableView.endUpdates()
-        }
-    }
-    
-    private func updateSectionCellsAsPartOfBatchUpdate(_ section: TableViewSectionProvider, at sectionIndex: Int) {
-        func indexPaths(for indecies: Set<Int>) -> [IndexPath] {
-            return indecies.map { IndexPath(row: $0, section: sectionIndex) }
+        var sectionsToDeferReloading = [Int]()
+        
+        // First, do an insert/deletion reload of all of the sections that changed their row count
+        for (sectionIndex, section) in sectionsBeingDisplayed.enumerated() {
+            let diffResult = section.reloadData()
+            
+            // defer the reload of sections that don't change their cell count
+            if diffResult.deletedIndicies.isEmpty && diffResult.insertedIndicies.isEmpty {
+                sectionsToDeferReloading.append(sectionIndex)
+            } else {
+                tableView.deleteRows(at: diffResult.deletedIndicies.indexPaths(in: sectionIndex),   with: .fade)
+                tableView.insertRows(at: diffResult.insertedIndicies.indexPaths(in: sectionIndex),  with: .fade)
+                tableView.reloadRows(at: diffResult.unchangedIndicies.indexPaths(in: sectionIndex), with: .fade)
+            }
         }
         
-        let diffResult = section.reloadData()
-        tableView.deleteRows(at: indexPaths(for: diffResult.deletedIndicies),   with: .fade)
-        tableView.insertRows(at: indexPaths(for: diffResult.insertedIndicies),  with: .fade)
-        tableView.reloadRows(at: indexPaths(for: diffResult.unchangedIndicies), with: .fade)
+        tableView.endUpdates()
+        
+        // Then do a slightly deferred reload of the other sections.
+        // This prevents a nasty visual glitch where cells in the non-mutated sections would jump erratically.
+        DispatchQueue.main.async {
+            self.tableView.reloadSections(IndexSet(sectionsToDeferReloading), with: .fade)
+        }
+        
+        // undo the contentInset hack applied above
+        tableView.contentInset.bottom = _bottomContentInset
     }
     
     override open func viewDidLoad() {
@@ -146,6 +143,7 @@ open class DeclarativeTableViewController: UITableViewController {
         }
     }
     
+    // TODO: instead of forcing shut the refresh control immediately, maybe keep it visible until the following `relaodData`
     @objc private func refreshTableViewContent() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: { [weak self] in
             // stop the in-progress scroll associated with the pull-to-refresh action
