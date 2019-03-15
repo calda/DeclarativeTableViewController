@@ -13,15 +13,21 @@ import UIKit
 
 public class ButtonCell: UITableViewCell {
     
-    public var title: String {
-        didSet {
-            titleLabel.text = title
-        }
-    }
-    
     public enum Style {
         case `default`
         case destructive
+    }
+    
+    public var title: String {
+        didSet {
+            updateTitleLabel()
+        }
+    }
+    
+    public var style: Style {
+        didSet {
+            updateTitleLabel()
+        }
     }
     
     public var buttonTappedHandler: () -> Void
@@ -30,10 +36,6 @@ public class ButtonCell: UITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 18, weight: .bold)
-        
-        label.textColor = UIApplication.shared.keyWindow?.tintColor
-            ?? UIButton(type: .system).tintColor
-        
         return label
     }()
     
@@ -47,6 +49,7 @@ public class ButtonCell: UITableViewCell {
     
     public init(title: String, style: Style = .default, handler: @escaping () -> Void) {
         self.title = title
+        self.style = style
         self.buttonTappedHandler = handler
         super.init(style: .default, reuseIdentifier: nil)
         
@@ -54,13 +57,6 @@ public class ButtonCell: UITableViewCell {
         contentView.addSubview(titleLabel)
         contentView.addSubview(activityIndicator)
         accessoryType = .disclosureIndicator
-        
-        switch style {
-        case .default:
-            break
-        case .destructive:
-            titleLabel.textColor = .red
-        }
         
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
@@ -71,6 +67,8 @@ public class ButtonCell: UITableViewCell {
             activityIndicator.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
             activityIndicator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20)
         ])
+        
+        updateTitleLabel()
     }
     
     public convenience init(title: String, style: Style = .default, handler: @escaping (ButtonCell) -> Void) {
@@ -83,6 +81,18 @@ public class ButtonCell: UITableViewCell {
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func updateTitleLabel() {
+        titleLabel.text = title
+        
+        switch style {
+        case .default:
+            titleLabel.textColor = UIApplication.shared.keyWindow?.tintColor
+                ?? UIButton(type: .system).tintColor
+        case .destructive:
+            titleLabel.textColor = .red
+        }
     }
     
     public func showActivityIndicator() {
