@@ -34,8 +34,7 @@ open class DeclarativeTableViewController: UITableViewController {
         case none
         
         /// The Table View can be refreshed using the standard Pull to Refresh pattern.
-        /// - Note: When the user pulls to refresh, the table view will call `tableViewWillRebuild`,
-        ///         and then call `setupCells` again.
+        /// - Note: When the user pulls to refresh, the table view will call `rebuildTableViewContent`.
         case pullToRefresh
     }
     
@@ -48,6 +47,16 @@ open class DeclarativeTableViewController: UITableViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override open func viewDidLoad() {
+        super.viewDidLoad()
+        tableView.keyboardDismissMode = .interactive
+        tableView.delaysContentTouches = true
+        
+        buildTableViewContent()
+        configure(for: refreshStyle)
+    }
+    
+    
     /// Sets up the Table View sections and cells,
     /// and generally kicks off any network requests necessary to populate the table.
     ///
@@ -59,11 +68,6 @@ open class DeclarativeTableViewController: UITableViewController {
         fatalError("`setupCells()` must be overridden in this `DeclarativeTableViewController` subclass.")
     }
     
-    /// Rebuilds the the UITableView by calling `setupCells()` and then `reloadData()`
-    public func rebuildTableViewContent() {
-        buildTableViewContent()
-    }
-    
     private func buildTableViewContent() {
         setupCells()
         
@@ -72,6 +76,26 @@ open class DeclarativeTableViewController: UITableViewController {
         }
         
         reloadData(animated: false)
+    }
+    
+    /// Can be overridden in a subclass to perform some preparation
+    /// before the table view is refreshed and rebuilt.
+    open func tableViewWillRebuild() {
+        // to be implemented in a subclass
+    }
+    
+    /// Rebuilds the the UITableView by calling `setupCells()` and then `reloadData(animated: false)`
+    public func rebuildTableViewContent(animated: Bool) {
+        tableViewWillRebuild()
+        buildTableViewContent()
+        
+        if animated {
+            let transition = CATransition()
+            transition.type = .fade
+            transition.duration = 0.2
+            transition.timingFunction = CAMediaTimingFunction(name: .easeIn)
+            self.view.layer.add(transition, forKey: nil)
+        }
     }
     
     /// Reloads the UITableView content by updating the visibility of individual sections and cells.
@@ -116,60 +140,90 @@ open class DeclarativeTableViewController: UITableViewController {
         
         tableView.endUpdates()
         
-        // Then do a slightly deferred reload of the other sections.
+        // Then do a potentially deferred reload of the other sections.
         // This prevents a nasty visual glitch where cells in the non-mutated sections would jump erratically.
-        DispatchQueue.main.async {
-            self.tableView.reloadSections(IndexSet(sectionsToDeferReloading), with: .fade)
+        if sectionsToDeferReloading.count != self.sectionsBeingDisplayed.count {
+            DispatchQueue.main.async {
+                self.tableView.reloadSections(IndexSet(sectionsToDeferReloading), with: .fade)
+            }
+        } else {
+            // If all of the sections were deferred, then we actually have to just reload them all right now.
+            // The workaround in `tableViewDidFinishRefreshing` somehow relies on there being atleast one
+            // synchronous update animation.
+            tableView.reloadSections(IndexSet(sectionsToDeferReloading), with: .fade)
         }
         
         // undo the contentInset hack applied above
         tableView.contentInset.bottom = _bottomContentInset
+        
+        // end any in-progress refreshes
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+            self?.tableViewDidFinishRefreshing()
+        }
     }
     
-    override open func viewDidLoad() {
-        super.viewDidLoad()
-        tableView.keyboardDismissMode = .interactive
-        tableView.delaysContentTouches = true
-        
-        buildTableViewContent()
-        
+    
+    // MARK: Refreshing
+    
+    private func configure(for refreshStyle: RefreshStyle) {
         switch refreshStyle {
         case .none:
             break
         case .pullToRefresh:
             let refreshControl = UIRefreshControl()
-            refreshControl.addTarget(self, action: #selector(refreshTableViewContent), for: .valueChanged)
+            
+            refreshControl.addTarget(self,
+                action: #selector(userPerformedPullToRefreshGesture),
+                for: .valueChanged)
+            
             self.refreshControl = refreshControl
         }
     }
     
-    // TODO: instead of forcing shut the refresh control immediately, maybe keep it visible until the following `relaodData`
-    @objc private func refreshTableViewContent() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: { [weak self] in
-            // stop the in-progress scroll associated with the pull-to-refresh action
-            // so the table view can refresh correctly without an unusual animation
-            self?.tableView.panGestureRecognizer.isEnabled = false
-            self?.refreshControl?.endRefreshing()
-        })
+    private var _refreshTableViewAfterScrollViewEndsDecelerating = false
+    
+    @objc private func userPerformedPullToRefreshGesture() {
+        // Wait until the user releases finishes pull-down gesture (`scrollViewDidEndDecelerating`).
+        // Otherwise, the Table View jumps around.
+        // "Am I holding it wrong, or is it supposed to be this brittle?"
+        _refreshTableViewAfterScrollViewEndsDecelerating = true
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.725, execute: { [weak self] in
-            guard let self = self else { return }
-            self.tableViewWillRebuild()
-            self.tableView.panGestureRecognizer.isEnabled = true
-            self.rebuildTableViewContent()
-            
-            let transition = CATransition()
-            transition.type = .fade
-            transition.duration = 0.2
-            transition.timingFunction = CAMediaTimingFunction(name: .easeIn)
-            self.view.layer.add(transition, forKey: nil)
-        })
+        // Since we have to wait for the scrolling animations to finish before we can move on
+        // to the next step in the refresh process, increase the speed of the deceleration animations.
+        tableView.decelerationRate = .fast
     }
     
-    /// Can be overridden in a subclass to reset any model objects (i.e. fetched arrays)
-    /// or perform other preparation before the table view is refreshed and rebuilt.
-    open func tableViewWillRebuild() {
-        // to be implemented in a subclass
+    override open func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        if _refreshTableViewAfterScrollViewEndsDecelerating {
+            _refreshTableViewAfterScrollViewEndsDecelerating = false
+            self.rebuildTableViewContent(animated: true)
+        }
+    }
+    
+    private func tableViewDidFinishRefreshing() {
+        switch refreshStyle {
+        case .none:
+            break
+        case .pullToRefresh:
+            guard refreshControl?.isRefreshing == true else {
+                return
+            }
+            
+            // Scrolling to the top (even if already at the top) seems to prevent a visual glitch where the
+            // animation would be jerky, and the Refresh Control would momentarily reappear afterwards.
+            if tableView.contentOffset.y < 0 {
+                tableView.scrollToRow(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
+            }
+            
+            DispatchQueue.main.async {
+                self.refreshControl?.endRefreshing()
+            }
+            
+            // reset the table back to `UIScrollView.DecelerationRate.normal`
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35, execute: { [weak self] in
+                self?.tableView.decelerationRate = .normal
+            })
+        }
     }
     
     

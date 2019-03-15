@@ -74,8 +74,4 @@ class MultipleSectionExampleViewController: DeclarativeTableViewController {
         }
     }
     
-    override func tableViewWillRebuild() {
-        self.groupMembers = nil
-    }
-    
 }
