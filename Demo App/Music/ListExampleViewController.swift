@@ -13,13 +13,12 @@ import AVKit
 
 class ListExampleViewController: DeclarativeTableViewController {
     
-    var playlist: Playlist!
+    var playlist: Playlist = .allSongs
     private var currentSong: Song?
     
     init() {
         super.init(tableStyle: .plain, refreshStyle: .none)
-        display(.allSongs, animated: false)
-        configureBarButtonItems()
+        configureNavigationItem()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -34,7 +33,7 @@ class ListExampleViewController: DeclarativeTableViewController {
             ReusableCellSection(
                 cellType: SongCell.self,
                 items: { [unowned self] in
-                    self.playlist.songs.map { song in
+                    self.playlist.songs.lazy.map { song in
                         SongCell.ViewModel(
                             song: song,
                             isCurrentlyPlaying: self.currentSong == song)
@@ -42,12 +41,6 @@ class ListExampleViewController: DeclarativeTableViewController {
                 },
                 selectionHandler: userSelected(_:in:))
         ]
-    }
-    
-    private func display(_ playlist: Playlist, animated: Bool) {
-        self.playlist = playlist
-        navigationItem.title = playlist.name
-        reloadData(animated: animated)
     }
     
     
@@ -74,7 +67,9 @@ class ListExampleViewController: DeclarativeTableViewController {
     
     // MARK: Playlist Selection
     
-    private func configureBarButtonItems() {
+    private func configureNavigationItem() {
+        navigationItem.title = playlist.name
+        
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             title: "Playlists",
             style: .plain,
@@ -90,7 +85,9 @@ class ListExampleViewController: DeclarativeTableViewController {
                 title: (self.playlist == playlist) ? "✓ \(playlist.name)" : playlist.name,
                 style: .default,
                 handler: { _ in
-                    self.display(playlist, animated: true)
+                    self.playlist = playlist
+                    self.configureNavigationItem()
+                    self.reloadData()
             }))
         }
         

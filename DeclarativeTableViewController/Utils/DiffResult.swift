@@ -31,9 +31,9 @@ public struct DiffResult: Equatable {
 
 // MARK: - Array + diff(against:)
 
-extension Array where Element: Hashable {
+extension Collection where Element: Hashable, Index == Int {
     
-    func diff(against other: [Element]) -> DiffResult {
+    func diff(against other: Self) -> DiffResult {
         let originalSet = Set<Element>(self)
         let changedSet = Set<Element>(other)
         
@@ -59,7 +59,7 @@ extension Array where Element: Hashable {
         }
         
         // build the intermediate array without the deleted item
-        var itemsNotDeletedFromOriginal = self
+        var itemsNotDeletedFromOriginal = Array(self)
         for index in [Int](diffResult.deletedIndicies).sorted(by: >) {
             itemsNotDeletedFromOriginal.remove(at: index)
         }

@@ -28,11 +28,14 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
     
     // These are type-erased so that the Section doesn't have to be generic.
     // They're all set during the strongly-typed generic init implementations, though,
-    // so this is perfectly safe.
-    private var typeErasedItems: [Any]?
-    private let retrieveTypeErasedItems: () -> [Any]?
+    // so this is reasonably safe.
+    private var typeErasedItems: Any?
+    private let retrieveTypeErasedItems: () -> Any?
+    private let itemCount: (Any?) -> Int?
+    private let itemAtIndex: (Any?, Int) -> Any?
+    
     private let typeErasedDecorator: (Any, UITableViewCell) -> Void
-    private let diffItemArrays: ([Any], [Any]) -> DiffResult
+    private let diffItemArrays: (Any, Any) -> DiffResult
     private let typeErasedSelectionHandler: ((Any, UITableViewCell) -> Void)?
     
     /// Initializes a `ReusableCellSection` displaying instances of `CellType`.
@@ -47,7 +50,7 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
     ///   - placeholderCell: An optional `UITableViewCell` instance that is displayed if `items` is `nil`.
     ///        By default, a `LoadingIndicatorCell` instance.
     ///
-    ///   - items: A closure that returns an optional array of `CellType.ModelType`.
+    ///   - items: A closure that returns an optional collection of `CellType.ModelType`.
     ///
     ///        The exact `ModelType` is specified by the `typealias ModelType = ...` in your `ReusableCell`
     ///        instance. This closure is called when the cell is initialized, and then subsequently called by the
@@ -61,14 +64,19 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
     /// - Note: If you're getting an error "Cannot convert value of type `() -> [CellType.ModelType]`
     ///      to expected argument type `() -> [_]?`", make sure that `SongCell.ModelType` conforms to `Hashable`.
     ///
-    public convenience init<CellType: UITableViewCell>(
+    public convenience init<CellType, CollectionType>(
         name: String? = nil,
         cellType: CellType.Type,
         displayIf condition: @escaping () -> Bool = { true },
         placeholderCell: UITableViewCell? = LoadingIndicatorCell(),
-        items: @escaping () -> [CellType.ModelType]?,
+        items: @escaping () -> CollectionType?,
         selectionHandler: ((CellType.ModelType, CellType) -> Void)? = nil)
-        where CellType: ReusableCell, CellType.ModelType: Hashable
+        where CellType: UITableViewCell,
+              CellType: ReusableCell,
+              CellType.ModelType: Hashable,
+              CollectionType: RandomAccessCollection,
+              CollectionType.Element == CellType.ModelType,
+              CollectionType.Index == Int
     {
         self.init(
             name: name,
@@ -89,7 +97,7 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
     ///   - placeholderCell: An optional `UITableViewCell` instance that is displayed if `items` is `nil`.
     ///        By default, a `LoadingIndicatorCell` instance.
     ///
-    ///   - items: A closure that returns an optional array of `CellType.ModelType`.
+    ///   - items: A closure that returns an optional collection of `CellType.ModelType`.
     ///
     ///        The exact `ModelType` is specified by the `typealias ModelType = ...` in your `ReusableCell`
     ///        instance. This closure is called when the cell is initialized, and then subsequently called by the
@@ -108,14 +116,19 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
     /// - Note: If you're getting an error "Cannot convert value of type `() -> [ModelType]` to
     ///      expected argument type `() -> [_]?`", make sure that `SongCell.ModelType` conforms to `Hashable`.
     ///
-    public init<CellType: UITableViewCell, ModelType: Hashable>(
+    public init<CellType, ModelType, CollectionType>(
         name: String? = nil,
         cellType: CellType.Type,
         displayIf condition: @escaping () -> Bool = { true },
         placeholderCell: UITableViewCell? = LoadingIndicatorCell(),
-        items: @escaping () -> [ModelType]?,
+        items: @escaping () -> CollectionType?,
         decorator: @escaping (ModelType, CellType) -> Void,
         selectionHandler: ((ModelType, CellType) -> Void)? = nil)
+        where CellType: UITableViewCell,
+              ModelType: Hashable,
+              CollectionType: RandomAccessCollection,
+              CollectionType.Element == ModelType,
+              CollectionType.Index == Int
     {
         if cellType is PassthroughCell {
             // `PassthroughCell` is specifically designed to work with `Section`
@@ -128,9 +141,7 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
         self.dequeableCellType = cellType
         self.placeholderCell = placeholderCell
         
-        // type-erase the closures
-        self.retrieveTypeErasedItems = { return items() }
-        self.typeErasedItems = retrieveTypeErasedItems()
+        // type-erase the closures for storage in this non-generic instance
         
         func unerase<T>(_ typeErasedValue: Any, of type: T.Type) -> T {
             guard let unerasedValue = typeErasedValue as? T else {
@@ -138,6 +149,20 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
             }
             
             return unerasedValue
+        }
+        
+        self.retrieveTypeErasedItems = { return items() }
+        
+        self.itemCount = { typeErasedItems in
+            guard let typeErasedItems = typeErasedItems else { return nil }
+            let typedItems = unerase(typeErasedItems, of: CollectionType.self)
+            return typedItems.count
+        }
+        
+        self.itemAtIndex = { typeErasedItems, index in
+            guard let typeErasedItems = typeErasedItems else { return nil }
+            let typedItems = unerase(typeErasedItems, of: CollectionType.self)
+            return typedItems[index]
         }
         
         self.typeErasedDecorator = { untypedModel, untypedCell in
@@ -157,12 +182,10 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
         }
         
         self.diffItemArrays = { originalUntypedArray, newUntypedArray in
-            let originalArray = unerase(originalUntypedArray, of: [ModelType].self)
-            let newArray = unerase(newUntypedArray, of: [ModelType].self)
+            let originalArray = unerase(originalUntypedArray, of: CollectionType.self)
+            let newArray = unerase(newUntypedArray, of: CollectionType.self)
             return originalArray.diff(against: newArray)
         }
-        
-        reloadData()
     }
     
     public static func == (lhs: ReusableCellSection, rhs: ReusableCellSection) -> Bool {
@@ -174,9 +197,20 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
     
     @discardableResult
     public func reloadData() -> DiffResult {
-        let optionalItemsBeforeReload = typeErasedItems
+        
+        func currentItems() -> (collection: Any, count: Int)? {
+            guard let items = self.typeErasedItems,
+                let count = self.itemCount(typeErasedItems) else
+            {
+                return nil
+            }
+            
+            return (items, count)
+        }
+        
+        let optionalItemsBeforeReload = currentItems()
         typeErasedItems = retrieveTypeErasedItems()
-        let optionalItemsAfterReload = typeErasedItems
+        let optionalItemsAfterReload = currentItems()
         
         shouldDisplaySection = displayCondition() && numberOfRows > 0
         
@@ -187,20 +221,20 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
             
         // Placeholder -> Content
         case (.none, .some(let itemsAfterReload)):
-            return DiffResult(deletedIndicies: [0], insertedIndicies: Array(itemsAfterReload.indices))
+            return DiffResult(deletedIndicies: [0], insertedIndicies: Array(0 ..< itemsAfterReload.count))
             
         // Content -> Placeholder
         case (.some(let itemsBeforeReload), .none):
-            return DiffResult(deletedIndicies: Array(itemsBeforeReload.indices), insertedIndicies: [0])
+            return DiffResult(deletedIndicies: Array(0 ..< itemsBeforeReload.count), insertedIndicies: [0])
             
         // Content -> Content
         case (.some(let itemsBeforeReload), .some(let itemsAfterReload)):
-            return diffItemArrays(itemsBeforeReload, itemsAfterReload)
+            return diffItemArrays(itemsBeforeReload.collection, itemsAfterReload.collection)
         }
     }
     
     public var numberOfRows: Int {
-        if let numberOfModelItems = typeErasedItems?.count {
+        if let numberOfModelItems = itemCount(typeErasedItems) {
             return numberOfModelItems
         } else if placeholderCell != nil {
             return 1
@@ -210,7 +244,7 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
     }
     
     public func createCell(for indexPath: IndexPath, in tableView: UITableView) -> UITableViewCell {
-        guard let typeErasedItems = typeErasedItems else {
+        guard let itemAtIndex = itemAtIndex(typeErasedItems, indexPath.row) else {
             if let placeholderCell = placeholderCell {
                 return placeholderCell
             } else {
@@ -224,7 +258,7 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
             cell.selectionStyle = .none
         }
         
-        typeErasedDecorator(typeErasedItems[indexPath.row], cell)
+        typeErasedDecorator(itemAtIndex, cell)
         return cell
     }
     
@@ -241,11 +275,11 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
     }
     
     public func handleSelection(for indexPath: IndexPath, in tableView: UITableView) {
-        guard let typeErasedItems = typeErasedItems else {
+        guard let itemAtIndex = itemAtIndex(typeErasedItems, indexPath.row) else {
             return
         }
         
-        typeErasedSelectionHandler?(typeErasedItems[indexPath.item], cell(for: indexPath, in: tableView))
+        typeErasedSelectionHandler?(itemAtIndex, cell(for: indexPath, in: tableView))
     }
     
 }
