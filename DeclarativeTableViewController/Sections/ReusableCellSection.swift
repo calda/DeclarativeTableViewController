@@ -130,7 +130,6 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
         
         // type-erase the closures
         self.retrieveTypeErasedItems = { return items() }
-        self.typeErasedItems = retrieveTypeErasedItems()
         
         func unerase<T>(_ typeErasedValue: Any, of type: T.Type) -> T {
             guard let unerasedValue = typeErasedValue as? T else {
@@ -161,8 +160,6 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
             let newArray = unerase(newUntypedArray, of: [ModelType].self)
             return originalArray.diff(against: newArray)
         }
-        
-        reloadData()
     }
     
     public static func == (lhs: ReusableCellSection, rhs: ReusableCellSection) -> Bool {

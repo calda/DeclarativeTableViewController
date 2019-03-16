@@ -117,7 +117,6 @@ open class DeclarativeTableViewController: UITableViewController {
         guard previousSectionCount == sectionsBeingDisplayed.count,
             animated else
         {
-            sections.forEach { $0.reloadData() }
             sectionsBeingDisplayed = sections.filter { $0.shouldDisplaySection }
             tableView.reloadData()
             

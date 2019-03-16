@@ -22,11 +22,7 @@ public class Section: TableViewSectionProvider, Equatable {
     /// The on-screen section is not updated until you call
     /// `DeclarativeTableViewController.reloadData(animated:)`.
     ///
-    public var cells: [UITableViewCell] {
-        didSet {
-            reloadData()
-        }
-    }
+    public var cells: [UITableViewCell]
     
     public var name: String?
     public var shouldDisplaySection = true
@@ -56,7 +52,6 @@ public class Section: TableViewSectionProvider, Equatable {
         self.name = name
         self.displayCondition = condition
         self.cells = cells
-        reloadData()
     }
     
     public static func ==(_ lhs: Section, _ rhs: Section) -> Bool {
