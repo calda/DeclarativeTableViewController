@@ -27,6 +27,14 @@ class ProfilePreviewCell: UITableViewCell, ReusableCell {
         profileView.display(profileDisplayable)
     }
     
+    func willBecomeSelectable(_ selectable: Bool) {
+        if selectable {
+            self.accessoryType = .disclosureIndicator
+        } else {
+            self.accessoryType = .none
+        }
+    }
+    
     
     // MARK: Initialization
     

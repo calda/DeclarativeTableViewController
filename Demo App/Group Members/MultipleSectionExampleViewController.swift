@@ -60,7 +60,10 @@ class MultipleSectionExampleViewController: DeclarativeTableViewController {
             ReusableCellSection(
                 name: "Members",
                 cellType: ProfilePreviewCell.self,
-                items: { [unowned self] in self.groupMembers }),
+                items: { [unowned self] in self.groupMembers },
+                selectionHandler: { [unowned self] user, _ in
+                    self.presentDetail(for: user)
+            }),
         ]
         
         SocialAPI.fetchUsers(in: group) { updatedGroup, users in
@@ -68,6 +71,19 @@ class MultipleSectionExampleViewController: DeclarativeTableViewController {
             self.groupMembers = users
             self.reloadData()
         }
+    }
+    
+    
+    // MARK: User Interaction
+    
+    private func presentDetail(for user: User) {
+        let alert = UIAlertController(
+            title: "Member Detail",
+            message: "\(user.name) from \(user.location)",
+            preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "Dismiss", style: .default))
+        present(alert, animated: true)
     }
     
     

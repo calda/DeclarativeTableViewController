@@ -49,6 +49,15 @@ class MultipleSectionExampleViewController: XCTestCase {
         assert(groupMemberCount: 6, viewingAsAdmin: true)
     }
     
+    func testCanSelectUser() {
+        app.cells.element(boundBy: 5).tap()
+        
+        _ = app.alerts.element(boundBy: 0).waitForExistence(timeout: 10)
+        XCTAssertEqual(app.alerts.element(boundBy: 0).staticTexts.element(boundBy: 0).label, "Member Detail")
+        app.buttons["Dismiss"].tap()
+        XCTAssertEqual(app.alerts.count, 0)
+    }
+    
     
     // MARK: Helpers
     

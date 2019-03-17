@@ -34,6 +34,7 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
     private let typeErasedDecorator: (Any, UITableViewCell) -> Void
     private let diffItemArrays: ([Any], [Any]) -> DiffResult
     private let typeErasedSelectionHandler: ((Any, UITableViewCell) -> Void)?
+    private var cellWillBecomeSelectable: ((UITableViewCell, Bool) -> Void)?
     
     /// Initializes a `ReusableCellSection` displaying instances of `CellType`.
     ///
@@ -78,6 +79,10 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
             items: items,
             decorator: { $1.display($0) },
             selectionHandler: selectionHandler)
+        
+        cellWillBecomeSelectable = { untypedCell, selectable in
+            (untypedCell as? CellType)?.willBecomeSelectable(selectable)
+        }
     }
     
     /// Initializes a `ReusableCellSection` displaying instances of `CellType`.
@@ -216,11 +221,13 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
         }
         
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath)
+        let cellIsSelectable = (typeErasedSelectionHandler != nil)
         
-        if typeErasedSelectionHandler == nil {
+        if !cellIsSelectable {
             cell.selectionStyle = .none
         }
         
+        cellWillBecomeSelectable?(cell, cellIsSelectable)
         typeErasedDecorator(typeErasedItems[indexPath.row], cell)
         return cell
     }

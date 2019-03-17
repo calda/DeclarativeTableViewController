@@ -28,8 +28,10 @@ class SongCell: UITableViewCell, ReusableCell {
         
         if model.isCurrentlyPlaying {
             pauseIcon.isHidden = false
+            accessibilityLabel = "Playing \(model.song.title) by \(model.song.artist)"
         } else {
             pauseIcon.isHidden = true
+            accessibilityLabel = "\(model.song.title) by \(model.song.artist)"
         }
     }
     

@@ -18,4 +18,14 @@ public protocol ReusableCell: class {
     
     func display(_ model: ModelType)
     
+    func willBecomeSelectable(_ selectable: Bool)
+    
+}
+
+public extension ReusableCell {
+    
+    func willBecomeSelectable(_ selectable: Bool) {
+        return
+    }
+    
 }
