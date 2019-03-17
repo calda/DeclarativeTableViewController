@@ -29,14 +29,34 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
     // These are type-erased so that the Section doesn't have to be generic.
     // They're all set during the strongly-typed generic init implementations, though,
     // so this is reasonably safe.
-    private var typeErasedItems: Any?
-    private let retrieveTypeErasedItems: () -> Any?
-    private let itemCount: (Any?) -> Int?
-    private let itemAtIndex: (Any?, Int) -> Any?
+    private struct Items {
+        let wrappedItems: Any
+        
+        init(_ wrapped: Any) {
+            wrappedItems = wrapped
+        }
+    }
     
-    private let typeErasedDecorator: (Any, UITableViewCell) -> Void
-    private let diffItemArrays: (Any, Any) -> DiffResult
-    private let typeErasedSelectionHandler: ((Any, UITableViewCell) -> Void)?
+    private struct Item {
+        let wrappedItem: Any
+        
+        init(_ wrapped: Any) {
+            wrappedItem = wrapped
+        }
+    }
+    
+    private var typeErasedItems: Items?
+    private let retrieveTypeErasedItems: () -> Items?
+    private let itemCount: (Items?) -> Int?
+    private let itemAtIndex: (Items?, Int) -> Item?
+    
+    private let typeErasedDecorator: (Item, UITableViewCell) -> Void
+    private let diffItemArrays: (Items, Items) -> DiffResult
+    private let typeErasedSelectionHandler: ((Item, UITableViewCell) -> Void)?
+    
+    private var estimatedCellHeight = UITableView.automaticDimension
+    private var heightForCell: (UITableViewCell) -> CGFloat? = { _ in UITableView.automaticDimension }
+    
     
     /// Initializes a `ReusableCellSection` displaying instances of `CellType`.
     ///
@@ -86,6 +106,16 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
             items: items,
             decorator: { $1.display($0) },
             selectionHandler: selectionHandler)
+        
+        estimatedCellHeight = CellType.estimatedHeight
+        
+        heightForCell = { untypedCell in
+            guard let typedCell = untypedCell as? CellType else {
+                return nil
+            }
+            
+            return typedCell.height
+        }
     }
     
     /// Initializes a `ReusableCellSection` displaying instances of `CellType`.
@@ -142,38 +172,35 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
         self.placeholderCell = placeholderCell
         
         // type-erase the closures for storage in this non-generic instance
-        
-        func unerase<T>(_ typeErasedValue: Any, of type: T.Type) -> T {
-            guard let unerasedValue = typeErasedValue as? T else {
-                fatalError("Unable to reconstruct `\(T.self)` from `\(typeErasedValue)`")
+        self.retrieveTypeErasedItems = {
+            guard let items = items() else {
+                return nil
             }
             
-            return unerasedValue
+            return Items(items)
         }
-        
-        self.retrieveTypeErasedItems = { return items() }
         
         self.itemCount = { typeErasedItems in
             guard let typeErasedItems = typeErasedItems else { return nil }
-            let typedItems = unerase(typeErasedItems, of: CollectionType.self)
+            let typedItems = unerase(typeErasedItems.wrappedItems, of: CollectionType.self)
             return typedItems.count
         }
         
         self.itemAtIndex = { typeErasedItems, index in
             guard let typeErasedItems = typeErasedItems else { return nil }
-            let typedItems = unerase(typeErasedItems, of: CollectionType.self)
-            return typedItems[index]
+            let typedItems = unerase(typeErasedItems.wrappedItems, of: CollectionType.self)
+            return Item(typedItems[index])
         }
         
         self.typeErasedDecorator = { untypedModel, untypedCell in
-            let model = unerase(untypedModel, of: ModelType.self)
+            let model = unerase(untypedModel.wrappedItem, of: ModelType.self)
             let cell = unerase(untypedCell, of: CellType.self)
             decorator(model, cell)
         }
         
         if let selectionHandler = selectionHandler {
             self.typeErasedSelectionHandler = { untypedModel, untypedCell in
-                let model = unerase(untypedModel, of: ModelType.self)
+                let model = unerase(untypedModel.wrappedItem, of: ModelType.self)
                 let cell = unerase(untypedCell, of: CellType.self)
                 selectionHandler(model, cell)
             }
@@ -182,8 +209,8 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
         }
         
         self.diffItemArrays = { originalUntypedArray, newUntypedArray in
-            let originalArray = unerase(originalUntypedArray, of: CollectionType.self)
-            let newArray = unerase(newUntypedArray, of: CollectionType.self)
+            let originalArray = unerase(originalUntypedArray.wrappedItems, of: CollectionType.self)
+            let newArray = unerase(newUntypedArray.wrappedItems, of: CollectionType.self)
             return originalArray.diff(against: newArray)
         }
     }
@@ -198,7 +225,7 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
     @discardableResult
     public func reloadData() -> DiffResult {
         
-        func currentItems() -> (collection: Any, count: Int)? {
+        func currentItems() -> (collection: Items, count: Int)? {
             guard let items = self.typeErasedItems,
                 let count = self.itemCount(typeErasedItems) else
             {
@@ -270,6 +297,19 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
         tableView.register(dequeableCellType, forCellReuseIdentifier: reuseIdentifier)
     }
     
+    public func estimatedHeight(for indexPath: IndexPath, in tableView: UITableView) -> CGFloat {
+        if itemCount(typeErasedItems) == nil {
+            return UITableView.automaticDimension
+        }
+        
+        return estimatedCellHeight
+    }
+    
+    public func height(for indexPath: IndexPath, in tableView: UITableView) -> CGFloat {
+        let cell = self.cell(for: indexPath, in: tableView)
+        return heightForCell(cell) ?? UITableView.automaticDimension
+    }
+    
     public func cellIsSelectable(for indexPath: IndexPath, in tableView: UITableView) -> Bool {
         return typeErasedSelectionHandler != nil
     }
@@ -281,5 +321,7 @@ public class ReusableCellSection: TableViewSectionProvider, Equatable {
         
         typeErasedSelectionHandler?(itemAtIndex, cell(for: indexPath, in: tableView))
     }
+    
+    
     
 }

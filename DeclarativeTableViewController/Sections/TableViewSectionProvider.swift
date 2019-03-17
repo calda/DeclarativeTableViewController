@@ -22,6 +22,9 @@ public protocol TableViewSectionProvider {
     func cell(for indexPath: IndexPath, in tableView: UITableView) -> UITableViewCell
     func additionalSectionConfiguration(for tableView: UITableView)
     
+    func estimatedHeight(for indexPath: IndexPath, in tableView: UITableView) -> CGFloat
+    func height(for indexPath: IndexPath, in tableView: UITableView) -> CGFloat
+    
     func cellIsSelectable(for indexPath: IndexPath, in tableView: UITableView) -> Bool
     func handleSelection(for indexPath: IndexPath, in tableView: UITableView)
     

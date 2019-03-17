@@ -44,6 +44,10 @@ class ListExampleViewControllerTests: XCTestCase {
         
         assert(songCount: 12)
     }
+    
+    func testCanSelectCellToStartPlayback() {
+        // TODO: this would be a good addition
+    }
 
     private func assert(songCount: Int, file: StaticString = #file, line: UInt = #line) {
         expectation(

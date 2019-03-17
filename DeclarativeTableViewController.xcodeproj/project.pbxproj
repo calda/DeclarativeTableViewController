@@ -51,6 +51,7 @@
 		2E51259F223981E500B7C5BC /* ConditionalCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E51259E223981E500B7C5BC /* ConditionalCell.swift */; };
 		2E971E02223C288C00171963 /* PassthroughCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E971E01223C288C00171963 /* PassthroughCell.swift */; };
 		2E971E04223C2BD700171963 /* AutoupdatingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E971E03223C2BD700171963 /* AutoupdatingCell.swift */; };
+		2E971E06223E6F2C00171963 /* Unerase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E971E05223E6F2C00171963 /* Unerase.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -142,6 +143,7 @@
 		2E51259E223981E500B7C5BC /* ConditionalCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionalCell.swift; sourceTree = "<group>"; };
 		2E971E01223C288C00171963 /* PassthroughCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassthroughCell.swift; sourceTree = "<group>"; };
 		2E971E03223C2BD700171963 /* AutoupdatingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoupdatingCell.swift; sourceTree = "<group>"; };
+		2E971E05223E6F2C00171963 /* Unerase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Unerase.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -325,6 +327,7 @@
 			isa = PBXGroup;
 			children = (
 				2E51258C2239808600B7C5BC /* DiffResult.swift */,
+				2E971E05223E6F2C00171963 /* Unerase.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -560,6 +563,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2E15A632223A7385009BE659 /* ReusableCell.swift in Sources */,
+				2E971E06223E6F2C00171963 /* Unerase.swift in Sources */,
 				2E971E04223C2BD700171963 /* AutoupdatingCell.swift in Sources */,
 				2E51259C223981C800B7C5BC /* LoadingIndicatorCell.swift in Sources */,
 				2E51258D2239808600B7C5BC /* DiffResult.swift in Sources */,

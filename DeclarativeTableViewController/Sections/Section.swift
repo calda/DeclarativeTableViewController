@@ -128,6 +128,14 @@ public class Section: TableViewSectionProvider, Equatable {
         // noop, nothing to configure
     }
     
+    public func estimatedHeight(for indexPath: IndexPath, in tableView: UITableView) -> CGFloat {
+        return UITableView.automaticDimension
+    }
+    
+    public func height(for indexPath: IndexPath, in tableView: UITableView) -> CGFloat {
+        return UITableView.automaticDimension
+    }
+    
     public func cellIsSelectable(for indexPath: IndexPath, in tableView: UITableView) -> Bool {
         return cell(for: indexPath, in: tableView) is SelectableCell
     }

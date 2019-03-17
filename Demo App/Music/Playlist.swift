@@ -16,7 +16,7 @@ struct Playlist: Hashable {
     let name: String
     let songs: [Song]
     
-    static let all = [Playlist.allSongs, .indie, .rock]
+    static let all = [Playlist.allSongs, .indie, .rock, .allSongs100x]
     
     static let indie = Playlist(
         name: "Indie",
@@ -30,6 +30,20 @@ struct Playlist: Hashable {
         name: "All Songs",
         songs: (Playlist.indie.songs + Playlist.rock.songs).sorted(by: { $0.title < $1.title }))
     
+    static let allSongs100x = Playlist(
+        name: "All Songs x100",
+        songs: (0...99).flatMap { iteration -> [Song] in
+            guard iteration > 0 else {
+                return Playlist.allSongs.songs
+            }
+            
+            return Playlist.allSongs.songs.map { song in
+                var mutableSong = song
+                mutableSong.title = "\(song.title) (\(iteration))"
+                return mutableSong
+            }
+        })
+    
 }
 
 
@@ -37,9 +51,9 @@ struct Playlist: Hashable {
 
 struct Song: Hashable {
     
-    let title: String
-    let artist: String
-    let albumArt: UIImage
+    var title: String
+    var artist: String
+    var albumArt: UIImage
     
     var audioFileUrl: URL {
         return Bundle.main.url(forResource: title, withExtension: "m4a")!
