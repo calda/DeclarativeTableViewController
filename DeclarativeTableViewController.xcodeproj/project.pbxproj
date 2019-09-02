@@ -92,6 +92,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2E0252F9231D861800163468 /* Demo App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Demo App.entitlements"; sourceTree = "<group>"; };
 		2E15A5F12239AE93009BE659 /* Demo App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Demo App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2E15A5F32239AE93009BE659 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2E15A5F52239AE93009BE659 /* ListExampleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListExampleViewController.swift; sourceTree = "<group>"; };
@@ -181,6 +182,7 @@
 		2E15A5F22239AE93009BE659 /* Demo App */ = {
 			isa = PBXGroup;
 			children = (
+				2E0252F9231D861800163468 /* Demo App.entitlements */,
 				2E15A62C2239D1B4009BE659 /* Music */,
 				2E15A64F223AFEA9009BE659 /* Group Members */,
 				2E15A5F32239AE93009BE659 /* AppDelegate.swift */,
@@ -436,6 +438,7 @@
 				TargetAttributes = {
 					2E15A5F02239AE93009BE659 = {
 						CreatedOnToolsVersion = 10.1;
+						LastSwiftMigration = 1100;
 					};
 					2E15A6052239AE94009BE659 = {
 						CreatedOnToolsVersion = 10.1;
@@ -448,7 +451,7 @@
 					};
 					2E51257622397CEA00B7C5BC = {
 						CreatedOnToolsVersion = 10.1;
-						LastSwiftMigration = 1010;
+						LastSwiftMigration = 1100;
 					};
 				};
 			};
@@ -611,7 +614,9 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Demo App/Demo App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = FZ89A5SZ7C;
 				INFOPLIST_FILE = "Demo App/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -621,7 +626,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "tech.calstephens.DeclarativeTableViewController.Demo-App";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -631,7 +637,9 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Demo App/Demo App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = FZ89A5SZ7C;
 				INFOPLIST_FILE = "Demo App/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -641,7 +649,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "tech.calstephens.DeclarativeTableViewController.Demo-App";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -868,7 +877,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -894,7 +903,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = tech.calstephens.DeclarativeTableViewController;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

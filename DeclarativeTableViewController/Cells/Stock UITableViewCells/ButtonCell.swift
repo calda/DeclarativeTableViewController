@@ -40,7 +40,13 @@ public class ButtonCell: UITableViewCell {
     }()
     
     fileprivate let activityIndicator: UIActivityIndicatorView = {
-        let activityIndicator = UIActivityIndicatorView(style: .gray)
+        let activityIndicator: UIActivityIndicatorView
+        if #available(iOS 13.0, *) {
+            activityIndicator = UIActivityIndicatorView(style: .medium)
+        } else {
+            activityIndicator = UIActivityIndicatorView(style: .gray)
+        }
+        
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         activityIndicator.hidesWhenStopped = true
         activityIndicator.stopAnimating()
@@ -88,7 +94,7 @@ public class ButtonCell: UITableViewCell {
         
         switch style {
         case .default:
-            titleLabel.textColor = UIApplication.shared.keyWindow?.tintColor
+            titleLabel.textColor = UIApplication.shared.windows.first?.tintColor
                 ?? UIButton(type: .system).tintColor
         case .destructive:
             titleLabel.textColor = .red
